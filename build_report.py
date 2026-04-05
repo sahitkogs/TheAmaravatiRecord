@@ -78,6 +78,8 @@ def assign_caste_to_name(full_name, surname_map, indicator_map, not_surnames):
     if is_company(full_name):
         return "Company", "high"
 
+    # Expand dots into spaces so "BORRA.SRINIVASA" -> "BORRA SRINIVASA"
+    full_name = full_name.replace('.', ' ')
     parts = full_name.split()
     if not parts:
         return None, None
