@@ -4,3 +4,8 @@ __pycache__/
 all_surnames.txt
 add_surnames.py
 .claude/
+.continue/
+.kiro/
+skills/
+skills-lock.json
+*.xlsx
