@@ -230,11 +230,12 @@ tr:hover td {{ background: var(--paper-tinted); }}
           <th style="text-align:left; padding:8px; font-family:var(--font-sans); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink-mid);">Community</th>
           <th style="text-align:right; padding:8px; font-family:var(--font-sans); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink-mid);">Share</th>
           <th style="text-align:right; padding:8px; font-family:var(--font-sans); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink-mid);">Plots</th>
+          <th style="text-align:right; padding:8px; font-family:var(--font-sans); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink-mid);">Acres</th>
         </tr>
       </thead>
       <tbody>
 """ + "".join(
-    f'        <tr style="border-bottom:1px solid var(--rule-light);"><td style="padding:8px;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:{caste_colors.get(c,"#999")};margin-right:8px;vertical-align:middle;"></span>{c}</td><td style="text-align:right;padding:8px;font-family:var(--font-display);font-weight:700;">{100*stats["caste_plot_counts"].get(c,0)/total:.2f}%</td><td style="text-align:right;padding:8px;color:var(--ink-mid);">{stats["caste_plot_counts"].get(c,0):,}</td></tr>\n'
+    f'        <tr style="border-bottom:1px solid var(--rule-light);"><td style="padding:8px;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:{caste_colors.get(c,"#999")};margin-right:8px;vertical-align:middle;"></span>{c}</td><td style="text-align:right;padding:8px;font-family:var(--font-display);font-weight:700;">{100*stats["caste_plot_counts"].get(c,0)/total:.2f}%</td><td style="text-align:right;padding:8px;color:var(--ink-mid);">{stats["caste_plot_counts"].get(c,0):,}</td><td style="text-align:right;padding:8px;color:var(--ink-mid);">{stats["caste_area"].get(c,0)/43560:,.1f}</td></tr>\n'
     for c in all_castes
 ) + f"""      </tbody>
     </table>
