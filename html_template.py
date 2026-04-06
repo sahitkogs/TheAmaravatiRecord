@@ -430,7 +430,7 @@ function renderVillages() {{
   }});
 
   // 100% stacked horizontal bars
-  const traces = AC.filter(c => c !== 'Unknown' && c !== 'Mixed').map(caste => ({{
+  const traces = AC.map(caste => ({{
     name: caste, type: 'bar', orientation: 'h',
     y: villages, x: villages.map(v => {{
       const t = Object.values(VCP[v]).reduce((s,x)=>s+x,0);
