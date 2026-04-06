@@ -223,19 +223,7 @@ tr:hover td {{ background: var(--paper-tinted); }}
   <h2 class="section-title">Who Got the Land?</h2>
   <p class="section-sub">Share of plots allocated to each caste community</p>
 
-  <div class="hero-bar">
-    <div class="hero-bar__bar">
-""" + "".join(
-    f'      <div class="hero-bar__seg" style="width:{100*stats["caste_plot_counts"].get(c,0)/total:.1f}%;background:{caste_colors.get(c,"#999")}">{100*stats["caste_plot_counts"].get(c,0)/total:.1f}%</div>\n'
-    for c in all_castes if stats['caste_plot_counts'].get(c, 0) / total > 0.02
-) + f"""    </div>
-    <div class="hero-bar__legend">
-""" + "".join(
-    f'      <div class="hero-bar__item"><div class="hero-bar__dot" style="background:{caste_colors.get(c,"#999")}"></div>{c} {100*stats["caste_plot_counts"].get(c,0)/total:.1f}%</div>\n'
-    for c in all_castes
-) + f"""    </div>
-  </div>
-
+  <div class="chart-wrap"><div id="hero-bar"></div></div>
   <div class="chart-wrap"><h3>Land Share by Community</h3><div id="treemap"></div></div>
 </div>
 
@@ -349,9 +337,28 @@ function showTab(name) {{
 // ─── Overview Charts ───
 function renderOverview() {{
   const castes = Object.keys(CPC);
-  const pcts = castes.map(c => +(100 * CPC[c] / TOTAL).toFixed(1));
-  const areaPcts = castes.map(c => +(100 * (CA[c]||0) / {stats['total_area']}).toFixed(1));
+  const pcts = castes.map(c => +(100 * CPC[c] / TOTAL).toFixed(2));
+  const areaPcts = castes.map(c => +(100 * (CA[c]||0) / {stats['total_area']}).toFixed(2));
   const colors = castes.map(c => CC[c] || '#999');
+
+  // Hero stacked bar
+  const heroTraces = castes.map((c, i) => ({{
+    type: 'bar', orientation: 'h', name: c,
+    y: [''], x: [pcts[i]],
+    marker: {{ color: colors[i] }},
+    text: pcts[i] >= 2 ? [pcts[i] + '%'] : [''],
+    textposition: 'inside',
+    textfont: {{ color: '#fff', size: 12, family: "'Source Serif 4', Georgia, serif" }},
+    hovertemplate: c + ': ' + pcts[i] + '% (' + CPC[c].toLocaleString() + ' plots)<extra></extra>',
+  }}));
+  Plotly.newPlot('hero-bar', heroTraces, {{
+    ...pLayout, barmode: 'stack', showlegend: true,
+    legend: {{ font: {{ size: 10 }}, orientation: 'h', y: -0.3, x: 0.5, xanchor: 'center' }},
+    xaxis: {{ range: [0, 100], ticksuffix: '%', showgrid: false }},
+    yaxis: {{ showticklabels: false }},
+    height: 120, margin: {{ t: 10, b: 60, l: 10, r: 10 }},
+    bargap: 0,
+  }}, pCfg);
 
   // Treemap
   const acresPerCaste = castes.map(c => ((CA[c]||0) / 43560).toFixed(1));
