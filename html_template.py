@@ -223,8 +223,22 @@ tr:hover td {{ background: var(--paper-tinted); }}
   <h2 class="section-title">Who Got the Land?</h2>
   <p class="section-sub">Share of plots allocated to each caste community</p>
 
-  <div class="chart-wrap"><div id="hero-bar"></div></div>
-  <div class="chart-wrap"><h3>Land Share by Community</h3><div id="treemap"></div></div>
+  <div class="chart-wrap">
+    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--rule);">
+          <th style="text-align:left; padding:8px; font-family:var(--font-sans); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink-mid);">Community</th>
+          <th style="text-align:right; padding:8px; font-family:var(--font-sans); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink-mid);">Share</th>
+          <th style="text-align:right; padding:8px; font-family:var(--font-sans); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink-mid);">Plots</th>
+        </tr>
+      </thead>
+      <tbody>
+""" + "".join(
+    f'        <tr style="border-bottom:1px solid var(--rule-light);"><td style="padding:8px;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:{caste_colors.get(c,"#999")};margin-right:8px;vertical-align:middle;"></span>{c}</td><td style="text-align:right;padding:8px;font-family:var(--font-display);font-weight:700;">{100*stats["caste_plot_counts"].get(c,0)/total:.2f}%</td><td style="text-align:right;padding:8px;color:var(--ink-mid);">{stats["caste_plot_counts"].get(c,0):,}</td></tr>\n'
+    for c in all_castes
+) + f"""      </tbody>
+    </table>
+  </div>
 </div>
 
 <!-- ═══ VILLAGE MAP ═══ -->
@@ -334,44 +348,8 @@ function showTab(name) {{
   window.dispatchEvent(new Event('resize'));
 }}
 
-// ─── Overview Charts ───
-function renderOverview() {{
-  const castes = Object.keys(CPC);
-  const pcts = castes.map(c => +(100 * CPC[c] / TOTAL).toFixed(2));
-  const areaPcts = castes.map(c => +(100 * (CA[c]||0) / {stats['total_area']}).toFixed(2));
-  const colors = castes.map(c => CC[c] || '#999');
-
-  // Hero stacked bar
-  const heroTraces = castes.map((c, i) => ({{
-    type: 'bar', orientation: 'h', name: c,
-    y: [''], x: [pcts[i]],
-    marker: {{ color: colors[i] }},
-    text: pcts[i] >= 2 ? [pcts[i] + '%'] : [''],
-    textposition: 'inside',
-    textfont: {{ color: '#fff', size: 12, family: "'Source Serif 4', Georgia, serif" }},
-    hovertemplate: c + ': ' + pcts[i] + '% (' + CPC[c].toLocaleString() + ' plots)<extra></extra>',
-  }}));
-  Plotly.newPlot('hero-bar', heroTraces, {{
-    ...pLayout, barmode: 'stack', showlegend: true,
-    legend: {{ font: {{ size: 10 }}, orientation: 'h', y: -0.3, x: 0.5, xanchor: 'center' }},
-    xaxis: {{ range: [0, 100], ticksuffix: '%', showgrid: false }},
-    yaxis: {{ showticklabels: false }},
-    height: 120, margin: {{ t: 10, b: 60, l: 10, r: 10 }},
-    bargap: 0,
-  }}, pCfg);
-
-  // Treemap
-  const acresPerCaste = castes.map(c => ((CA[c]||0) / 43560).toFixed(1));
-  Plotly.newPlot('treemap', [{{
-    type: 'treemap', labels: castes, parents: castes.map(() => ''),
-    values: castes.map(c => CPC[c]),
-    customdata: acresPerCaste,
-    texttemplate: '%{{label}}<br>%{{percentRoot:.1%}}',
-    hovertemplate: '%{{label}}<br>%{{value:,}} plots (%{{percentRoot:.1%}})<br>%{{customdata}} acres<extra></extra>',
-    marker: {{ colors }},
-  }}], {{ ...pLayout, margin: {{ t: 10, b: 10, l: 10, r: 10 }} }}, pCfg);
-
-}}
+// ─── Overview ───
+// Table is rendered server-side, no JS needed for overview
 
 // ─── Map ───
 function initMap() {{
@@ -489,7 +467,6 @@ function sortTable(c) {{
   cPage = 0; renderPage();
 }}
 
-renderOverview();
 renderVillages();
 </script>
 </body>
