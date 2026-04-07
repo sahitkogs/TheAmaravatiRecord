@@ -2,11 +2,12 @@
 """Build an HTML explorer for the surname ground truth corpus."""
 import csv
 import json
+import os
 import re
 from collections import defaultdict, Counter
 
-# ─── Load data ───────────────────────────────────────────────────────────────
-surnames_data = defaultdict(lambda: {'castes': {}, 'total_sources': 0})
+# ─── Load ground truth ──────────────────────────────────────────────────────
+surnames_data = defaultdict(lambda: {'castes': {}, 'total_sources': 0, 'examples': defaultdict(list)})
 
 with open('data/surname_ground_truth.csv', encoding='utf-8') as f:
     reader = csv.DictReader(f)
@@ -15,7 +16,6 @@ with open('data/surname_ground_truth.csv', encoding='utf-8') as f:
         c = row['caste'].strip()
         url = row['source_url'].strip()
 
-        # Quality filter
         if len(s) <= 2 or re.search(r'[^A-Z]', s):
             continue
 
@@ -24,7 +24,34 @@ with open('data/surname_ground_truth.csv', encoding='utf-8') as f:
         surnames_data[s]['castes'][c].append(url)
         surnames_data[s]['total_sources'] += 1
 
-# Build JSON for HTML
+# ─── Load Gemini classification for example full names ───────────────────────
+gemini_examples = defaultdict(lambda: defaultdict(list))  # surname -> caste -> [full names]
+gemini_path = 'data/gemini_name_caste_map.json'
+if os.path.exists(gemini_path):
+    with open(gemini_path, encoding='utf-8') as f:
+        gemini_map = json.load(f)
+    for full_name, info in gemini_map.items():
+        parts = full_name.replace('.', ' ').split()
+        if not parts:
+            continue
+        surname = parts[0].upper().strip('.-')
+        if len(surname) <= 2:
+            continue
+        caste = info.get('caste', 'Unknown')
+        if surname in surnames_data and len(gemini_examples[surname][caste]) < 5:
+            gemini_examples[surname][caste].append(full_name)
+
+# ─── Load MyNeta SC examples ────────────────────────────────────────────────
+myneta_path = 'data/myneta_sc_candidates.json'
+if os.path.exists(myneta_path):
+    with open(myneta_path, encoding='utf-8') as f:
+        myneta_records = json.load(f)
+    for rec in myneta_records:
+        s = rec['surname']
+        if s in surnames_data and len(gemini_examples[s]['SC']) < 5:
+            gemini_examples[s]['SC'].append(rec['full_name'])
+
+# ─── Build JSON for HTML ────────────────────────────────────────────────────
 all_castes = sorted(set(c for d in surnames_data.values() for c in d['castes']))
 entries = []
 for surname, data in sorted(surnames_data.items()):
@@ -32,7 +59,12 @@ for surname, data in sorted(surnames_data.items()):
     for c in all_castes:
         if c in data['castes']:
             urls = list(set(data['castes'][c]))
-            caste_list.append({'caste': c, 'sources': len(urls), 'urls': urls})
+            examples = gemini_examples.get(surname, {}).get(c, [])
+            caste_list.append({'caste': c, 'sources': len(urls), 'urls': urls, 'examples': examples[:3]})
+    # Also add Gemini-only castes (person classified as a caste not in ground truth)
+    for c, names in gemini_examples.get(surname, {}).items():
+        if c not in data['castes'] and c not in ('Unknown', 'Other'):
+            caste_list.append({'caste': c, 'sources': 0, 'urls': [], 'examples': names[:3], 'gemini_only': True})
     entries.append({
         'surname': surname,
         'castes': caste_list,
@@ -283,9 +315,44 @@ function render() {{
   let html = '';
   for (let i = start; i < end; i++) {{
     const e = filtered[i];
-    const tags = e.castes.map(c => '<span class="tag" style="background:' + (COLORS[c.caste]||'#666') + '" title="' + c.sources + ' source(s)">' + c.caste + '</span>').join('');
+    const tags = e.castes.map(c => {{
+      const geminiFlag = c.gemini_only ? ' *' : '';
+      return '<span class="tag" style="background:' + (COLORS[c.caste]||'#666') + '" title="' + c.sources + ' source(s)">' + c.caste + geminiFlag + '</span>';
+    }}).join('');
     const badge = e.num_castes > 1 ? ' <span class="overlap-badge">' + e.num_castes + ' castes</span>' : '';
-    html += '<tr><td><strong>' + e.surname + '</strong>' + badge + '</td><td>' + e.num_castes + '</td><td>' + tags + '</td><td>' + e.total_sources + '</td></tr>';
+    const rowId = 'detail-' + i;
+
+    html += '<tr onclick="toggleDetail(\\'' + rowId + '\\')" style="cursor:pointer"><td><strong>' + e.surname + '</strong>' + badge + '</td><td>' + e.num_castes + '</td><td>' + tags + '</td><td>' + e.total_sources + '</td></tr>';
+
+    // Expandable detail row
+    let detailHtml = '<tr id="' + rowId + '" style="display:none"><td colspan="4" style="padding:12px;background:var(--paper-tinted);border:1px solid var(--rule-light)">';
+    e.castes.forEach(c => {{
+      const color = COLORS[c.caste] || '#666';
+      detailHtml += '<div style="margin-bottom:10px;padding:8px;border-left:3px solid ' + color + '">';
+      detailHtml += '<div style="font-family:sans-serif;font-size:11px;font-weight:700;color:' + color + ';text-transform:uppercase;letter-spacing:1px">' + c.caste;
+      if (c.gemini_only) detailHtml += ' <span style="font-size:9px;color:var(--ink-light)">(Gemini classification only, not in ground truth)</span>';
+      detailHtml += '</div>';
+
+      // Sources
+      if (c.urls && c.urls.length > 0) {{
+        detailHtml += '<div style="font-family:sans-serif;font-size:11px;color:var(--ink-mid);margin-top:4px"><strong>Sources (' + c.sources + '):</strong></div>';
+        c.urls.forEach(url => {{
+          const short = url.length > 60 ? url.substring(0, 57) + '...' : url;
+          detailHtml += '<div style="font-family:sans-serif;font-size:10px;margin-left:8px"><a href="' + url + '" target="_blank" style="color:var(--ink-light)">' + short + '</a></div>';
+        }});
+      }}
+
+      // Example full names
+      if (c.examples && c.examples.length > 0) {{
+        detailHtml += '<div style="font-family:sans-serif;font-size:11px;color:var(--ink-mid);margin-top:4px"><strong>Example names:</strong></div>';
+        c.examples.forEach(name => {{
+          detailHtml += '<div style="font-family:sans-serif;font-size:12px;margin-left:8px;color:var(--ink)">' + name + '</div>';
+        }});
+      }}
+      detailHtml += '</div>';
+    }});
+    detailHtml += '</td></tr>';
+    html += detailHtml;
   }}
   document.getElementById('tbody').innerHTML = html;
 
@@ -295,6 +362,11 @@ function render() {{
   pg.innerHTML = '<button onclick="gp(0)">&laquo;</button><button onclick="gp(' + Math.max(0,page-1) + ')">&lsaquo;</button><span>Page ' + (page+1) + ' / ' + tp + '</span><button onclick="gp(' + Math.min(tp-1,page+1) + ')">&rsaquo;</button><button onclick="gp(' + (tp-1) + ')">&raquo;</button>';
 }}
 function gp(p) {{ page = p; render(); window.scrollTo(0, document.querySelector('.table-wrap').offsetTop - 100); }}
+
+function toggleDetail(id) {{
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+}}
 
 // Charts
 function renderCharts() {{
