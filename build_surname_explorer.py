@@ -73,13 +73,15 @@ for surname, data in sorted(surnames_data.items()):
     for c, names in gemini_examples.get(surname, {}).items():
         if c not in data['castes'] and c not in ('Unknown', 'Other'):
             caste_list.append({'caste': c, 'sources': 0, 'urls': [], 'examples': names[:3], 'gemini_only': True})
-    is_first_name = surname in detected_first_names
+    # Skip detected first names entirely
+    if surname in detected_first_names:
+        continue
+
     entries.append({
         'surname': surname,
         'castes': caste_list,
         'num_castes': len(data['castes']),
         'total_sources': data['total_sources'],
-        'is_first_name': is_first_name,
     })
 
 # Stats for overview
@@ -91,7 +93,6 @@ stats = {
         'shared_2': sum(1 for e in entries if e['num_castes'] == 2),
         'shared_3': sum(1 for e in entries if e['num_castes'] == 3),
         'shared_4plus': sum(1 for e in entries if e['num_castes'] >= 4),
-        'flagged_first_names': sum(1 for e in entries if e.get('is_first_name')),
     }
 }
 for c in all_castes:
@@ -205,7 +206,6 @@ tr:hover td {{ background: var(--paper-tinted); }}
   <div class="stat"><div class="stat__num">{stats['overlap']['shared_2']:,}</div><div class="stat__label">Shared (2 castes)</div></div>
   <div class="stat"><div class="stat__num">{stats['overlap']['shared_3']:,}</div><div class="stat__label">Shared (3 castes)</div></div>
   <div class="stat"><div class="stat__num">{stats['overlap']['shared_4plus']:,}</div><div class="stat__label">Shared (4+ castes)</div></div>
-  <div class="stat" style="border-color:#d4605a"><div class="stat__num" style="color:#d4605a">{stats['overlap']['flagged_first_names']:,}</div><div class="stat__label">Flagged as First Name</div></div>
 </div>
 
 <div class="section">
@@ -229,11 +229,6 @@ tr:hover td {{ background: var(--paper-tinted); }}
       <option value="2">Shared by 2+ castes</option>
       <option value="3">Shared by 3+ castes</option>
       <option value="4">Shared by 4+ castes</option>
-    </select>
-    <select id="firstname-filter" onchange="filterData()">
-      <option value="">All entries</option>
-      <option value="flagged">Flagged as first name</option>
-      <option value="clean">Clean surnames only</option>
     </select>
     <span class="count" id="count"></span>
   </div>
@@ -303,14 +298,10 @@ function filterData() {{
   const q = document.getElementById('search').value.toLowerCase();
   const overlap = document.getElementById('overlap-filter').value;
 
-  const fnFilter = document.getElementById('firstname-filter').value;
-
   filtered = DATA.filter(e => {{
     if (q && !e.surname.toLowerCase().includes(q)) return false;
     if (overlap && e.num_castes < parseInt(overlap)) return false;
     if (activeCaste && !e.castes.some(c => c.caste === activeCaste)) return false;
-    if (fnFilter === 'flagged' && !e.is_first_name) return false;
-    if (fnFilter === 'clean' && e.is_first_name) return false;
     return true;
   }});
 
@@ -341,11 +332,9 @@ function render() {{
       return '<span class="tag" style="background:' + (COLORS[c.caste]||'#666') + '" title="' + c.sources + ' source(s)">' + c.caste + geminiFlag + '</span>';
     }}).join('');
     const badge = e.num_castes > 1 ? ' <span class="overlap-badge">' + e.num_castes + ' castes</span>' : '';
-    const fnFlag = e.is_first_name ? ' <span style="background:#d4605a;color:#fff;padding:1px 5px;font-family:sans-serif;font-size:8px;font-weight:700;border-radius:2px;letter-spacing:0.5px">LIKELY FIRST NAME</span>' : '';
-    const rowStyle = e.is_first_name ? 'cursor:pointer;opacity:0.6;background:rgba(212,96,90,0.05)' : 'cursor:pointer';
     const rowId = 'detail-' + i;
 
-    html += '<tr onclick="toggleDetail(\\'' + rowId + '\\')" style="' + rowStyle + '"><td><strong>' + e.surname + '</strong>' + badge + fnFlag + '</td><td>' + e.num_castes + '</td><td>' + tags + '</td><td>' + e.total_sources + '</td></tr>';
+    html += '<tr onclick="toggleDetail(\\'' + rowId + '\\')" style="cursor:pointer"><td><strong>' + e.surname + '</strong>' + badge + '</td><td>' + e.num_castes + '</td><td>' + tags + '</td><td>' + e.total_sources + '</td></tr>';
 
     // Expandable detail row
     let detailHtml = '<tr id="' + rowId + '" style="display:none"><td colspan="4" style="padding:12px;background:var(--paper-tinted);border:1px solid var(--rule-light)">';
