@@ -9,7 +9,7 @@ from collections import defaultdict, Counter
 # ─── Load ground truth ──────────────────────────────────────────────────────
 surnames_data = defaultdict(lambda: {'castes': {}, 'total_sources': 0, 'examples': defaultdict(list)})
 
-with open('data/processed/surname_ground_truth.csv', encoding='utf-8') as f:
+with open('data/surname_ground_truth.csv', encoding='utf-8') as f:
     reader = csv.DictReader(f)
     for row in reader:
         s = row['surname'].strip().upper()
@@ -26,7 +26,7 @@ with open('data/processed/surname_ground_truth.csv', encoding='utf-8') as f:
 
 # ─── Load Gemini classification for example full names ───────────────────────
 gemini_examples = defaultdict(lambda: defaultdict(list))  # surname -> caste -> [full names]
-gemini_path = 'data/processed/gemini_name_caste_map.json'
+gemini_path = 'data/gemini_name_caste_map.json'
 if os.path.exists(gemini_path):
     with open(gemini_path, encoding='utf-8') as f:
         gemini_map = json.load(f)
@@ -53,7 +53,7 @@ if os.path.exists(myneta_path):
 
 # ─── Load detected first names for flagging ─────────────────────────────────
 detected_first_names = set()
-detected_path = 'data/processed/detected_first_names.json'
+detected_path = 'data/detected_first_names.json'
 if os.path.exists(detected_path):
     with open(detected_path, encoding='utf-8') as f:
         detected_data = json.load(f)

@@ -276,8 +276,8 @@ class TestMappingConsistency:
     def test_ground_truth_exists(self):
         """surname_ground_truth.csv must exist and have data."""
         import os
-        assert os.path.exists('data/processed/surname_ground_truth.csv'), "Ground truth CSV missing"
-        with open('data/processed/surname_ground_truth.csv', encoding='utf-8') as f:
+        assert os.path.exists('data/surname_ground_truth.csv'), "Ground truth CSV missing"
+        with open('data/surname_ground_truth.csv', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             rows = list(reader)
         assert len(rows) > 5000, f"Ground truth too small: {len(rows)} rows"

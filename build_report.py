@@ -13,8 +13,8 @@ from collections import Counter, defaultdict
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-DATA_FILE = "data/raw/apcrda_lps_data.csv"
-MAPPING_FILE = "data/processed/caste_surname_map.json"
+DATA_FILE = "data/apcrda_lps_data.csv"
+MAPPING_FILE = "data/caste_surname_map.json"
 OUTPUT_FILE = "reports/amaravati_caste_report.html"
 
 # Village name normalization map
