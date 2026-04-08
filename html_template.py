@@ -103,6 +103,7 @@ body {{ font-family: var(--font-body); font-size: 15px; line-height: 1.6; color:
 .map-legend {{ font-family: var(--font-sans); font-size: 11px; padding: 10px; background: var(--paper); border: 1px solid var(--rule-light); margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; }}
 .map-legend-item {{ display: flex; align-items: center; gap: 4px; }}
 .map-legend-swatch {{ width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }}
+.plot-tooltip {{ font-family: var(--font-sans); font-size: 11px; padding: 3px 6px; }}
 
 /* Table */
 .table-controls {{ display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }}
@@ -380,6 +381,41 @@ function initMap() {{
   }});
   map.addControl(new HomeBtn());
 
+  // Fullscreen button control
+  const FsBtn = L.Control.extend({{
+    options: {{ position: 'topleft' }},
+    onAdd: function() {{
+      const btn = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+      const a = L.DomUtil.create('a', '', btn);
+      a.href = '#';
+      a.title = 'Toggle fullscreen';
+      a.style.cssText = 'font-size:16px;line-height:26px;display:block;width:26px;height:26px;text-align:center;text-decoration:none;color:#333;';
+      a.innerHTML = '&#x26F6;';
+      const mapEl = document.getElementById('map');
+      a.onclick = function(e) {{
+        e.preventDefault();
+        if (!document.fullscreenElement) {{
+          mapEl.requestFullscreen();
+        }} else {{
+          document.exitFullscreen();
+        }}
+        return false;
+      }};
+      document.addEventListener('fullscreenchange', function() {{
+        if (document.fullscreenElement === mapEl) {{
+          a.innerHTML = '&#x2716;';
+          a.title = 'Exit fullscreen';
+        }} else {{
+          a.innerHTML = '&#x26F6;';
+          a.title = 'Toggle fullscreen';
+        }}
+        setTimeout(function() {{ map.invalidateSize(); }}, 100);
+      }});
+      return btn;
+    }}
+  }});
+  map.addControl(new FsBtn());
+
   const baseLon = PGEO.base[0], baseLat = PGEO.base[1];
   const castes = PGEO.castes, villages = PGEO.villages;
   const plotsData = PGEO.plots;
@@ -455,6 +491,11 @@ function initMap() {{
       onEachFeature: function(f, layer) {{
         const caste = castes[f.properties.c];
         const village = villages[f.properties.v];
+        layer.bindTooltip(village + ' — ' + caste, {{
+          sticky: true,
+          direction: 'top',
+          className: 'plot-tooltip'
+        }});
         layer.bindPopup(
           '<div style="font-family:sans-serif;font-size:13px">' +
           '<strong>' + village + '</strong><br>' +

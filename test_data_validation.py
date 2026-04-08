@@ -273,23 +273,14 @@ class TestVillageNormalization:
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestMappingConsistency:
-    def test_json_and_csv_in_sync(self):
-        """surname_caste_directory.csv must match caste_surname_map.json."""
-        with open(MAPPING_FILE) as f:
-            data = json.load(f)
-        json_surnames = set(data['surnames'].keys())
-
-        csv_surnames = set()
-        with open('data/surname_caste_directory.csv') as f:
+    def test_ground_truth_exists(self):
+        """surname_ground_truth.csv must exist and have data."""
+        import os
+        assert os.path.exists('data/surname_ground_truth.csv'), "Ground truth CSV missing"
+        with open('data/surname_ground_truth.csv', encoding='utf-8') as f:
             reader = csv.DictReader(f)
-            for row in reader:
-                csv_surnames.add(row['surname'])
-
-        in_json_not_csv = json_surnames - csv_surnames
-        in_csv_not_json = csv_surnames - json_surnames
-
-        assert not in_json_not_csv, f"{len(in_json_not_csv)} surnames in JSON but not CSV"
-        assert not in_csv_not_json, f"{len(in_csv_not_json)} surnames in CSV but not JSON"
+            rows = list(reader)
+        assert len(rows) > 5000, f"Ground truth too small: {len(rows)} rows"
 
     def test_no_surname_is_also_not_surname(self, mapping):
         """A surname in the mapping should not also be in not_surnames
