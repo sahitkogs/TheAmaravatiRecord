@@ -27,12 +27,13 @@ from google.genai import types
 
 MODEL = "gemini-2.5-flash"
 BATCH_SIZE = 20
-DATA_DIR = "data"
-MAPPING_FILE = f"{DATA_DIR}/caste_surname_map.json"
-CSV_FILE = f"{DATA_DIR}/surname_caste_directory.csv"
-RESULTS_FILE = f"{DATA_DIR}/gemini_classification_results.json"
-NAME_MAP_FILE = f"{DATA_DIR}/gemini_name_caste_map.json"
-CHECKPOINT_FILE = f"{DATA_DIR}/gemini_checkpoint.json"
+RAW_DIR = "data/raw"
+PROCESSED_DIR = "data/processed"
+MAPPING_FILE = f"{PROCESSED_DIR}/caste_surname_map.json"
+CSV_FILE = f"{PROCESSED_DIR}/surname_caste_directory.csv"
+RESULTS_FILE = f"{PROCESSED_DIR}/gemini_classification_results.json"
+NAME_MAP_FILE = f"{PROCESSED_DIR}/gemini_name_caste_map.json"
+CHECKPOINT_FILE = f"{PROCESSED_DIR}/gemini_checkpoint.json"
 
 SYSTEM = """You are an expert on caste demographics in the Krishna-Guntur region of Andhra Pradesh, India. You classify land beneficiary names from official APCRDA (Amaravati Capital Region) records.
 

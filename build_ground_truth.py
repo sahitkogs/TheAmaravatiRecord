@@ -121,7 +121,7 @@ add_source('SC', 'https://en.wikipedia.org/wiki/Mala_(caste)',
 
 def load_json_sources():
     """Load additional sources from the JSON file."""
-    json_path = os.path.join('data', 'scraped_surname_sources.json')
+    json_path = os.path.join('data', 'raw', 'scraped_surname_sources.json')
     if not os.path.exists(json_path):
         return
 
@@ -154,7 +154,7 @@ def load_json_sources():
 def load_myneta_sc_records():
     """Load MyNeta SC candidate records with per-constituency URLs."""
     import os
-    myneta_path = os.path.join('data', 'myneta_sc_candidates.json')
+    myneta_path = os.path.join('data', 'raw', 'myneta_sc_candidates.json')
     if not os.path.exists(myneta_path):
         return
 
@@ -217,7 +217,7 @@ def main():
         print(f"  {s:<25} {', '.join(sorted(castes))}")
 
     # Save
-    output = os.path.join('data', 'surname_ground_truth.csv')
+    output = os.path.join('data', 'processed', 'surname_ground_truth.csv')
     with open(output, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(['surname', 'caste', 'source_url', 'gothram', 'region', 'example_full_names'])
