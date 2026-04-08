@@ -119,11 +119,16 @@ You may receive surname reference data for some names in the batch. These come f
 3. Use "Unknown" ONLY for truly unclassifiable names (single initials, gibberish, insufficient information to even guess).
 4. Be decisive. Make your best informed judgment even when uncertain — mark confidence as "low" if unsure, but still pick a specific caste.
 
-## Standard Categories
+## Categories
 
-Kamma, Kapu, Reddy, Brahmin, Vysya, Muslim, SC, ST, Velama, Kshatriya, Yadava, Christian, Other
+Kamma, Kapu, Reddy, Brahmin, Vysya, Muslim, Velama, Kshatriya, Yadava, Christian, Padmasali, Mudiraj, Gouda, Settibalija, Balija, Surya Balija, Vadabalija, Gavara, Jalari, Kalinga, Kurni, Kuruba, Boya, Agnikula Kshatriya, K Velama, P Velama, T Kapu, Mala, Madiga, Lambada, Bagata, Jatapu, Konda Dora, Koya
 
-You may also use specific sub-categories or other caste names not in this list. Post-processing will handle normalization.
+Always use the MOST SPECIFIC caste name possible. For example:
+- Use "Mala" or "Madiga" instead of "SC" when you can tell which one.
+- Use "Lambada" or "Koya" instead of "ST" when you can tell which one.
+- Use "Padmasali" instead of "Other".
+- Only fall back to "SC" or "ST" if you cannot determine the specific sub-community.
+- You may output caste names not in this list. Post-processing will handle normalization.
 
 ## Output Format
 

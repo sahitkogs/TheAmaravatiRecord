@@ -15,16 +15,25 @@ except ImportError:
 from prompts import SYSTEM_PROMPT as DEFAULT_SYSTEM_PROMPT
 
 CASTE_NORMALIZE = {
+    # Case normalization only — no merging
     'kamma': 'Kamma', 'kapu': 'Kapu', 'reddy': 'Reddy',
     'brahmin': 'Brahmin', 'vysya': 'Vysya', 'muslim': 'Muslim',
     'sc': 'SC', 'st': 'ST', 'velama': 'Velama',
     'kshatriya': 'Kshatriya', 'yadava': 'Yadava',
     'christian': 'Christian', 'other': 'Other', 'unknown': 'Unknown',
-    'scheduled caste': 'SC', 'scheduled tribe': 'ST',
-    'balija': 'Kapu', 'telaga': 'Kapu', 'mala': 'SC', 'madiga': 'SC',
-    'other bc': 'Other', 'other backward class (bc)': 'Other',
-    'kapu, kamma': 'Kapu',
-    'lambada': 'ST',
+    'mala': 'Mala', 'madiga': 'Madiga',
+    'scheduled caste': 'Scheduled Caste', 'scheduled tribe': 'Scheduled Tribe',
+    'lambada': 'Lambada', 'bagata': 'Bagata', 'jatapu': 'Jatapu',
+    'konda dora': 'Konda Dora', 'koya': 'Koya',
+    'padmasali': 'Padmasali', 'mudiraj': 'Mudiraj', 'gouda': 'Gouda',
+    'settibalija': 'Settibalija', 'balija': 'Balija',
+    'surya balija': 'Surya Balija', 'vadabalija': 'Vadabalija',
+    'gavara': 'Gavara', 'jalari': 'Jalari', 'kalinga': 'Kalinga',
+    'kurni': 'Kurni', 'kuruba': 'Kuruba', 'boya': 'Boya',
+    'agnikula kshatriya': 'Agnikula Kshatriya',
+    'k velama': 'K Velama', 'p velama': 'P Velama',
+    't kapu': 'T Kapu',
+    'telaga': 'Telaga',
 }
 
 

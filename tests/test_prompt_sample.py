@@ -6,6 +6,8 @@ import random
 import sys
 import time
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -13,7 +15,7 @@ from google.genai import types
 load_dotenv()
 
 from build_report import process_data
-from prompts import SYSTEM_PROMPT, build_ground_truth_context, load_ground_truth
+from prompts import SYSTEM_PROMPT, build_reference_context, load_surname_references
 
 MODEL = os.environ.get('GEMINI_MODEL', 'gemini-2.5-flash')
 BATCH_SIZE = int(os.environ.get('GEMINI_BATCH_SIZE', '15'))
@@ -25,7 +27,7 @@ def classify_batch(client, batch_items, ground_truth):
     names_text = "\n".join(f"- {name} (village: {village})" for name, village in batch_items)
     prompt = f"Classify these Amaravati land beneficiaries:\n\n{names_text}"
 
-    gt_context = build_ground_truth_context([name for name, _ in batch_items], ground_truth)
+    gt_context = build_reference_context([name for name, _ in batch_items], ground_truth)
     if gt_context:
         prompt += f"\n\n{gt_context}"
 
@@ -72,7 +74,7 @@ def main():
                     'village': p['village'],
                 }
 
-    ground_truth = load_ground_truth()
+    ground_truth = load_surname_references()
     print(f"Ground truth: {len(ground_truth):,} surnames")
 
     # Sample
