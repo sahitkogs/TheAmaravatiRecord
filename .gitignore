@@ -8,6 +8,10 @@ __pycache__/
 skills/
 skills-lock.json
 *.xlsx
-archives/scratch_to_delete/
+archives/
 .playwright-mcp/
 .env
+docs/superpowers/
+tests/data/
+data/processed/
+*.png

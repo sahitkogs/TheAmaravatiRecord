@@ -14,11 +14,41 @@ from collections import Counter, defaultdict
 from dotenv import load_dotenv
 load_dotenv()
 
+from chatbot_in_html import inject_chatbot
+
+CHATBOT_SYSTEM_PROMPT = """You are the research assistant embedded in the Amaravati CRDA Land Allocation Caste Distribution Report. The report analyzes plot-level land pooling data from the Andhra Pradesh Capital Region Development Authority (APCRDA), with surname-based caste assignment.
+
+When the user asks a question, you will receive a [Screen Context] block containing the page title, section outline, the current section they are viewing, and the text currently visible in their viewport. Use that to answer precisely and cite the current section by name when relevant.
+
+You also have a [Report Data] block in this system prompt containing top-level statistics. Use those numbers when asked for totals. If asked for a figure that is neither in [Report Data] nor in the visible content, say you cannot see it from the current view and point the user to the relevant section.
+
+Answer concisely using markdown. Do not invent numbers."""
+
+CHATBOT_SUGGESTIONS = [
+    "Summarize the caste distribution",
+    "Which villages have the most plots?",
+    "Explain the methodology",
+    "What are the confidence levels?",
+]
+
+
+def _build_chatbot_context(plots, stats):
+    """Compact context dict embedded into the chatbot's system prompt."""
+    return {
+        "report_title": "Amaravati CRDA Land Allocation — Caste Distribution",
+        "data_source": "apcrda_lps_data.csv (APCRDA land pooling scheme)",
+        "methodology": "Surname-based caste classification via caste_surname_map.json",
+        "total_plots": stats["total_plots"],
+        "total_area_sqft": round(stats["total_area"]),
+        "caste_plot_counts": stats["caste_plot_counts"],
+        "confidence_counts": stats["confidence_counts"],
+    }
+
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 DATA_FILE = "data/apcrda_lps_data.csv"
 MAPPING_FILE = "data/caste_surname_map.json"
-OUTPUT_FILE = "reports/amaravati_caste_report.html"
+OUTPUT_FILE = "docs/reports/amaravati_caste_report.html"
 
 # Village name normalization map
 VILLAGE_NORMALIZE = {
@@ -482,6 +512,15 @@ def main():
 
     print(f"\nGenerating HTML report...")
     html = generate_html(plots, stats)
+    html = inject_chatbot(
+        html,
+        assistant_name="Caste Report Assistant",
+        system_prompt=CHATBOT_SYSTEM_PROMPT,
+        welcome_message="Hi! Ask me anything about this report. I can see the section you are currently viewing.",
+        suggestions=CHATBOT_SUGGESTIONS,
+        context_data=_build_chatbot_context(plots, stats),
+        default_backend="webllm",
+    )
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"Report saved to {OUTPUT_FILE}")
