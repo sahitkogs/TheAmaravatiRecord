@@ -1,0 +1,55 @@
+-----BEGIN PUBLIC KEY PLACEHOLDER-----
+
+This file is a placeholder for the PGP public key of the editor of
+The Amaravati Record. The actual key has not yet been generated.
+
+To set it up:
+
+1. Generate a new PGP keypair on your local machine:
+
+   gpg --full-generate-key
+
+   Choose:
+     - Kind: (1) RSA and RSA
+     - Keysize: 4096
+     - Expiry: 2 years (or less; you can always rotate)
+     - Real name: Sahit Koganti
+     - Email: sahit.koganti@gmail.com
+     - Comment: The Amaravati Record editor key
+     - Passphrase: strong, memorable, NOT stored in any password manager
+                   that you would not trust a whistleblower's life to
+
+2. Export the public key:
+
+   gpg --armor --export sahit.koganti@gmail.com > pgp-key.txt
+
+3. Replace the contents of this file with that exported public key,
+   commit, and push. The file at /pgp-key.txt will then serve the key
+   to anyone who wants to encrypt mail to you.
+
+4. Record the fingerprint:
+
+   gpg --fingerprint sahit.koganti@gmail.com
+
+   Copy the fingerprint into docs/contact.html where it currently
+   says "[placeholder — will be published here once the key is generated]".
+
+5. Upload the public key to a public keyserver so that mail clients
+   can look it up automatically:
+
+   gpg --keyserver keys.openpgp.org --send-keys <your-fingerprint>
+
+6. Store the PRIVATE key and its revocation certificate in TWO
+   physically separate, offline locations. The revocation certificate
+   is what you use to declare the key compromised if anything goes
+   wrong; generate it with:
+
+   gpg --output revoke.asc --gen-revoke sahit.koganti@gmail.com
+
+Until all of the above is done, this file should remain as a
+placeholder. If you are a whistleblower and you need to reach
+this publication before the key is published, send a plain-text
+email to sahit.koganti@gmail.com asking how to establish a secure
+channel, and the editor will coordinate with you directly.
+
+-----END PUBLIC KEY PLACEHOLDER-----
