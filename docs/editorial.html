@@ -466,8 +466,8 @@ const CHATBOT_API_KEY_HEADER = 'api-key';
 const CHATBOT_MODEL = 'gpt-4o';
 const CHATBOT_API_VERSION = '2024-10-21';
 const CHATBOT_PORTAL_URL = '';
-const CHATBOT_WEBLLM_MODELS = ["Phi-3.5-mini-instruct-q4f16_1-MLC", "SmolLM2-1.7B-Instruct-q4f16_1-MLC", "Llama-3.1-8B-Instruct-q4f32_1-MLC", "Qwen2.5-7B-Instruct-q4f16_1-MLC"];
-const CHATBOT_WEBLLM_DEFAULT = 'Phi-3.5-mini-instruct-q4f16_1-MLC';
+const CHATBOT_WEBLLM_MODELS = ["SmolLM2-1.7B-Instruct-q4f16_1-MLC", "SmolLM2-360M-Instruct-q4f16_1-MLC", "Qwen2.5-1.5B-Instruct-q4f16_1-MLC", "Llama-3.2-1B-Instruct-q4f16_1-MLC"];
+const CHATBOT_WEBLLM_DEFAULT = 'SmolLM2-1.7B-Instruct-q4f16_1-MLC';
 const CHATBOT_DEFAULT_BACKEND = 'webllm';
 
 // Detect if served via HTTP (proxy available) or opened from file://
@@ -947,9 +947,9 @@ async function ensureWebLLMEngine(modelId) {
       throw new Error('WebGPU not available in this browser. Use the Cloud backend instead.');
     }
     const mod = await import('https://esm.run/@mlc-ai/web-llm@0.2');
-    // chatOpts: enable sliding-window attention so long system prompts +
-    // visible-content captures + multi-turn history don't overflow the
-    // compiled context window (many MLC builds ship with 4096).
+    // chatOpts: sliding-window attention so long system prompts +
+    // multi-turn history don't overflow the compiled context window.
+    // Requires models with RoPEMode::kNormal (Phi-3.5 is NOT compatible).
     const chatOpts = {
       context_window_size: -1,
       sliding_window_size: 4096,
