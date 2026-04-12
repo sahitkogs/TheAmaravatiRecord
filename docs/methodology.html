@@ -220,13 +220,15 @@
     width: 48px; height: 48px; font-size: 22px;
   }
   #chatbotWindow {
-    width: 100vw; height: calc(100vh - 68px);
-    bottom: 68px; right: 0; left: 0;
+    width: 100vw; height: calc(100dvh - 72px);
+    bottom: 72px; right: 0; left: 0;
+    top: auto;
     border-radius: 12px 12px 0 0;
   }
   #chatbotWindow.maximized {
-    width: 100vw; height: calc(100vh - 68px);
-    bottom: 68px; right: 0; left: 0;
+    width: 100vw; height: calc(100dvh - 72px);
+    bottom: 72px; right: 0; left: 0;
+    top: auto;
     border-radius: 12px 12px 0 0;
   }
   #chatbotBubble.hidden {
@@ -1007,9 +1009,12 @@ function setInputEnabled(enabled) {
   if (enabled) inputEl.focus();
 }
 
+var isMobile = window.matchMedia('(max-width: 600px)').matches;
+
 function openChat() {
   chatWindow.classList.add('open');
   bubble.classList.add('hidden');
+  if (isMobile) document.body.style.overflow = 'hidden';
   if (messagesEl.children.length === 0) {
     if (!loadChat()) addWelcome();
   }
@@ -1020,6 +1025,7 @@ function openChat() {
 function closeChat() {
   chatWindow.classList.remove('open', 'maximized');
   bubble.classList.remove('hidden');
+  document.body.style.overflow = '';
   maximizeBtn.innerHTML = '&#9634;';
   maximizeBtn.title = 'Maximize';
 }
