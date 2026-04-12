@@ -605,6 +605,16 @@ Answer concisely using markdown. Be formal but approachable — broadsheet tone,
 const WELCOME_MSG = "Want to know exactly what cookies this site uses? I can walk you through it.";
 
 const SUGGESTION_POOL = ["What cookies does this site set?", "How do I reject cookies?", "What is Google Analytics 4?", "Do you honor Do Not Track?"];
+const FOLLOWUP_POOL = [
+  "Tell me more about this",
+  "Can you explain that differently?",
+  "What are the key takeaways?",
+  "What else should I know?",
+  "How does this compare?",
+  "Why does this matter?",
+  "Give me specific numbers",
+  "Summarize what we discussed",
+];
 
 // --- DOM elements ---
 const bubble = document.getElementById('chatbotBubble');
@@ -900,22 +910,37 @@ function readFileAsDataUrl(file) {
   });
 }
 
-function pickRandomSuggestions(count) {
-  const pool = SUGGESTION_POOL.slice();
+function pickRandomFrom(pool, count) {
+  const copy = pool.slice();
   const picks = [];
-  while (picks.length < count && pool.length > 0) {
-    const i = Math.floor(Math.random() * pool.length);
-    picks.push(pool.splice(i, 1)[0]);
+  while (picks.length < count && copy.length > 0) {
+    const i = Math.floor(Math.random() * copy.length);
+    picks.push(copy.splice(i, 1)[0]);
   }
   return picks;
 }
 
-function addSuggestionChips() {
+function addSuggestionChips(isFollowUp) {
   // Remove any existing chips first
   messagesEl.querySelectorAll('.chatbot-suggestions').forEach(function(el) { el.remove(); });
+  var picks;
+  if (isFollowUp) {
+    // After a response: mix 2 page-specific + 2 generic follow-ups
+    var pagePicks = pickRandomFrom(SUGGESTION_POOL, 2);
+    var genericPicks = pickRandomFrom(FOLLOWUP_POOL, 2);
+    picks = pagePicks.concat(genericPicks);
+    // Shuffle the combined picks
+    for (var i = picks.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = picks[i]; picks[i] = picks[j]; picks[j] = tmp;
+    }
+  } else {
+    // Initial welcome: show page-specific suggestions only
+    picks = pickRandomFrom(SUGGESTION_POOL, 4);
+  }
   const chips = document.createElement('div');
   chips.className = 'chatbot-suggestions';
-  pickRandomSuggestions(4).forEach(function(q) {
+  picks.forEach(function(q) {
     const btn = document.createElement('button');
     btn.className = 'chatbot-suggestion';
     btn.textContent = q;
@@ -1222,7 +1247,7 @@ async function sendMessage() {
     isGenerating = false;
     setInputEnabled(true);
     refreshBackendUI();
-    addSuggestionChips();
+    addSuggestionChips(true);
   }
 }
 
