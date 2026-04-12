@@ -73,21 +73,45 @@ def strip_old_chatbot(html: str) -> str:
         flags=re.DOTALL,
     )
 
-    # 2. Strip chatbot HTML elements
-    # Pattern: <!-- Chatbot Bubble --> through the end of chatbot window div
-    html = re.sub(
-        r'<!-- Chatbot Bubble -->.*?</div>\s*<!-- /Chatbot Window -->',
-        '',
-        html,
-        flags=re.DOTALL,
-    )
-    # Fallback: if no closing comment, match by IDs
-    html = re.sub(
-        r'<div id="chatbotBubble"[^>]*>.*?</div>\s*<div id="chatbotWindow"[^>]*>.*?</div>',
-        '',
-        html,
-        flags=re.DOTALL,
-    )
+    # 2. Strip chatbot HTML elements (bubble + window with all nested children)
+    # Match from <!-- Chatbot Bubble --> through the chatbot window's final </div>
+    # by counting div nesting depth to find the correct closing tag.
+    def strip_chatbot_html(h):
+        while True:
+            start = h.find('<!-- Chatbot Bubble -->')
+            if start == -1:
+                # Also try matching by ID directly
+                start = h.find('<div id="chatbotBubble"')
+                if start == -1:
+                    break
+            # Find the chatbotWindow div after the bubble
+            win_start = h.find('<div id="chatbotWindow"', start)
+            if win_start == -1:
+                # Just a bubble without window — remove until next -->
+                end = h.find('</div>', start)
+                if end != -1:
+                    h = h[:start] + h[end + 6:]
+                break
+            # Count nesting to find the window's closing </div>
+            depth = 0
+            i = win_start
+            while i < len(h):
+                if h[i:i+4] == '<div':
+                    depth += 1
+                    i += 4
+                elif h[i:i+6] == '</div>':
+                    depth -= 1
+                    if depth == 0:
+                        # Found the matching close
+                        h = h[:start] + h[i + 6:]
+                        break
+                    i += 6
+                else:
+                    i += 1
+            else:
+                break  # Safety: couldn't find matching close
+        return h
+    html = strip_chatbot_html(html)
 
     # 3. Strip chatbot JS block
     # Pattern: <script> containing chatbot configuration constants
