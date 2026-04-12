@@ -899,12 +899,9 @@ function pickRandomSuggestions(count) {
   return picks;
 }
 
-function addWelcome() {
-  const div = document.createElement('div');
-  div.className = 'chatbot-msg bot';
-  div.style.whiteSpace = 'pre-wrap';
-  div.textContent = WELCOME_MSG;
-  messagesEl.appendChild(div);
+function addSuggestionChips() {
+  // Remove any existing chips first
+  messagesEl.querySelectorAll('.chatbot-suggestions').forEach(function(el) { el.remove(); });
   const chips = document.createElement('div');
   chips.className = 'chatbot-suggestions';
   pickRandomSuggestions(4).forEach(function(q) {
@@ -920,6 +917,16 @@ function addWelcome() {
     chips.appendChild(btn);
   });
   messagesEl.appendChild(chips);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function addWelcome() {
+  const div = document.createElement('div');
+  div.className = 'chatbot-msg bot';
+  div.style.whiteSpace = 'pre-wrap';
+  div.textContent = WELCOME_MSG;
+  messagesEl.appendChild(div);
+  addSuggestionChips();
 }
 
 function setInputEnabled(enabled) {
@@ -1204,6 +1211,7 @@ async function sendMessage() {
     isGenerating = false;
     setInputEnabled(true);
     refreshBackendUI();
+    addSuggestionChips();
   }
 }
 
