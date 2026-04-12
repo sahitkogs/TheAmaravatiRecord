@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from chatbot_in_html import inject_chatbot
+from chatbot_in_html.themes import THEME_NEWSPAPER
 
 CHATBOT_SYSTEM_PROMPT = """You are the research assistant embedded in the Amaravati CRDA Land Allocation Caste Distribution Report. The report analyzes plot-level land pooling data from the Andhra Pradesh Capital Region Development Authority (APCRDA), with surname-based caste assignment.
 
@@ -520,6 +521,7 @@ def main():
         suggestions=CHATBOT_SUGGESTIONS,
         context_data=_build_chatbot_context(plots, stats),
         default_backend="webllm",
+        custom_css=THEME_NEWSPAPER,
     )
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         f.write(html)

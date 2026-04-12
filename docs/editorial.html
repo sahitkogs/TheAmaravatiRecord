@@ -18,6 +18,318 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script defer src="consent.js"></script>
+<style>
+/* --- Chatbot Styles (themeable via --cb-* custom properties) --- */
+#chatbotBubble, #chatbotWindow {
+  --cb-accent: #4cc9f0;
+  --cb-accent-hover: #3ab4d9;
+  --cb-bubble-bg: linear-gradient(135deg, #4cc9f0, #1a1a2e);
+  --cb-bubble-border: none;
+  --cb-header-bg: linear-gradient(135deg, #1a1a2e, #16213e);
+  --cb-header-text: #fff;
+  --cb-header-muted: #adb5bd;
+  --cb-window-bg: #fff;
+  --cb-window-radius: 16px;
+  --cb-messages-bg: #f8f9fa;
+  --cb-user-bg: #4cc9f0;
+  --cb-user-text: #fff;
+  --cb-bot-bg: #fff;
+  --cb-bot-text: #333;
+  --cb-bot-border: #e9ecef;
+  --cb-code-bg: #e9ecef;
+  --cb-pre-bg: #1a1a2e;
+  --cb-pre-text: #e9ecef;
+  --cb-table-header-bg: #f1f3f5;
+  --cb-table-border: #dee2e6;
+  --cb-system-text: #888;
+  --cb-suggestion-bg: #e9ecef;
+  --cb-suggestion-border: #dee2e6;
+  --cb-suggestion-text: #333;
+  --cb-input-bg: #fff;
+  --cb-input-border: #dee2e6;
+  --cb-input-row-bg: #fff;
+  --cb-send-disabled: #adb5bd;
+  --cb-image-btn-text: #6c757d;
+  --cb-dot-default: #888;
+  --cb-dot-ready: #2ecc71;
+  --cb-dot-border: #1a1a2e;
+  --cb-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --cb-msg-radius: 12px;
+  --cb-dropdown-bg: #1a1a2e;
+  --cb-dropdown-text: #fff;
+}
+#chatbotBubble {
+  position: fixed; bottom: 28px; right: 28px; z-index: 10000;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--cb-bubble-bg); color: #fff;
+  border: var(--cb-bubble-border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  transition: transform 0.2s, box-shadow 0.2s; font-size: 26px;
+}
+#chatbotBubble:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
+#chatbotBubble.hidden { display: none; }
+#chatbotDot {
+  position: absolute; top: 6px; right: 6px; width: 10px; height: 10px;
+  border-radius: 50%; background: var(--cb-dot-default); border: 2px solid var(--cb-dot-border);
+}
+#chatbotDot.ready { background: var(--cb-dot-ready); }
+#chatbotWindow {
+  display: none; position: fixed; bottom: 28px; right: 28px; z-index: 10001;
+  width: 400px; height: 520px; border-radius: var(--cb-window-radius); overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25); flex-direction: column;
+  background: var(--cb-window-bg); font-family: var(--cb-font);
+}
+#chatbotWindow.open { display: flex; }
+#chatbotWindow.maximized { width: 700px; height: 80vh; bottom: 20px; right: 20px; border-radius: 12px; }
+.chatbot-header {
+  background: var(--cb-header-bg); color: var(--cb-header-text);
+  padding: 12px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.chatbot-header-title { flex: 1; font-weight: 600; font-size: 15px; }
+.chatbot-header button {
+  background: none; border: none; color: var(--cb-header-muted); cursor: pointer;
+  font-size: 18px; padding: 2px 6px; border-radius: 4px;
+}
+.chatbot-header button:hover { color: var(--cb-header-text); background: rgba(255,255,255,0.1); }
+#chatbotMessages {
+  flex: 1; overflow-y: auto; padding: 16px; display: flex;
+  flex-direction: column; gap: 10px; background: var(--cb-messages-bg);
+}
+.chatbot-msg {
+  max-width: 85%; padding: 10px 14px; border-radius: var(--cb-msg-radius);
+  font-size: 14px; line-height: 1.5; word-wrap: break-word;
+}
+.chatbot-msg.user {
+  align-self: flex-end; background: var(--cb-user-bg); color: var(--cb-user-text);
+  border-bottom-right-radius: 4px;
+}
+.chatbot-msg.bot {
+  align-self: flex-start; background: var(--cb-bot-bg); color: var(--cb-bot-text);
+  border: 1px solid var(--cb-bot-border); border-bottom-left-radius: 4px;
+}
+.chatbot-msg.bot p { margin: 0 0 8px 0; }
+.chatbot-msg.bot p:last-child { margin-bottom: 0; }
+.chatbot-msg.bot code { background: var(--cb-code-bg); padding: 1px 5px; border-radius: 3px; font-size: 13px; }
+.chatbot-msg.bot pre { background: var(--cb-pre-bg); color: var(--cb-pre-text); padding: 10px; border-radius: 6px;
+  overflow-x: auto; margin: 8px 0; }
+.chatbot-msg.bot pre code { background: none; color: inherit; padding: 0; }
+.chatbot-msg.bot table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 13px; }
+.chatbot-msg.bot th, .chatbot-msg.bot td { border: 1px solid var(--cb-table-border); padding: 5px 8px; text-align: left; }
+.chatbot-msg.bot th { background: var(--cb-table-header-bg); font-weight: 600; }
+.chatbot-msg.system {
+  align-self: center; color: var(--cb-system-text); font-size: 12px; font-style: italic; padding: 4px 0;
+}
+.chatbot-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0; }
+.chatbot-suggestion {
+  background: var(--cb-suggestion-bg); border: 1px solid var(--cb-suggestion-border);
+  border-radius: 16px; padding: 6px 12px; font-size: 12px; cursor: pointer;
+  color: var(--cb-suggestion-text); transition: background 0.15s;
+}
+.chatbot-suggestion:hover { background: var(--cb-accent); color: #fff; border-color: var(--cb-accent); }
+.chatbot-input-row {
+  display: flex; align-items: flex-end; gap: 8px; padding: 12px 16px;
+  border-top: 1px solid var(--cb-bot-border); background: var(--cb-input-row-bg); flex-shrink: 0;
+}
+#chatbotInput {
+  flex: 1; border: 1px solid var(--cb-input-border); border-radius: 8px; padding: 8px 12px;
+  font-size: 14px; resize: none; outline: none; max-height: 80px;
+  font-family: inherit; line-height: 1.4; background: var(--cb-input-bg); color: var(--cb-bot-text);
+}
+#chatbotInput:focus { border-color: var(--cb-accent); }
+#chatbotSend {
+  background: var(--cb-accent); color: #fff; border: none; border-radius: 8px;
+  padding: 8px 14px; cursor: pointer; font-size: 14px; font-weight: 600;
+  transition: background 0.15s;
+}
+#chatbotSend:hover { background: var(--cb-accent-hover); }
+#chatbotSend:disabled { background: var(--cb-send-disabled); cursor: not-allowed; }
+#chatbotImageBtn {
+  background: none; border: 1px solid var(--cb-input-border); border-radius: 8px;
+  padding: 7px 10px; cursor: pointer; font-size: 16px; color: var(--cb-image-btn-text);
+  transition: all 0.15s; flex-shrink: 0;
+}
+#chatbotImageBtn:hover { border-color: var(--cb-accent); color: var(--cb-accent); }
+#chatbotImageBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+#chatbotImagePreview {
+  display: none; padding: 4px 16px 0; background: var(--cb-input-row-bg); flex-shrink: 0;
+}
+#chatbotImagePreview .preview-wrap {
+  display: inline-block; position: relative; border: 1px solid var(--cb-input-border);
+  border-radius: 6px; overflow: hidden;
+}
+#chatbotImagePreview img {
+  max-height: 80px; max-width: 200px; display: block;
+}
+#chatbotImagePreview .preview-remove {
+  position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6);
+  color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px;
+  font-size: 12px; cursor: pointer; line-height: 20px; text-align: center; padding: 0;
+}
+.chatbot-msg.user img {
+  max-width: 100%; max-height: 160px; border-radius: 6px; margin-top: 6px; display: block;
+}
+#chatbotBackendToggle, #chatbotWebllmModel {
+  background: none; border: 1px solid rgba(255,255,255,0.2);
+  color: var(--cb-header-muted); cursor: pointer; font-size: 13px;
+  padding: 3px 8px; border-radius: 4px;
+}
+#chatbotBackendToggle:hover, #chatbotWebllmModel:hover {
+  color: var(--cb-header-text); background: rgba(255,255,255,0.1);
+}
+#chatbotWebllmModel {
+  max-width: 140px;
+}
+#chatbotWebllmModel option {
+  background: var(--cb-dropdown-bg); color: var(--cb-dropdown-text);
+}
+.chatbot-header button[disabled] {
+  opacity: 0.35; cursor: not-allowed;
+}
+.chatbot-header button[disabled]:hover {
+  background: none; color: var(--cb-header-muted);
+}
+
+</style>
+<style>
+/* --- Chatbot Theme Overrides --- */
+/* --- Newspaper / Broadsheet Theme --- */
+#chatbotBubble, #chatbotWindow {
+  --cb-accent: #8b1a1a;
+  --cb-accent-hover: #6d1515;
+  --cb-bubble-bg: #1a1715;
+  --cb-bubble-border: 2px solid #d4cfc8;
+  --cb-header-bg: #1a1715;
+  --cb-header-text: #faf8f4;
+  --cb-header-muted: #d4cfc8;
+  --cb-window-bg: #faf8f4;
+  --cb-window-radius: 8px;
+  --cb-messages-bg: #f0ece4;
+  --cb-user-bg: #1a1715;
+  --cb-user-text: #faf8f4;
+  --cb-bot-bg: #faf8f4;
+  --cb-bot-text: #1a1715;
+  --cb-bot-border: #d4cfc8;
+  --cb-code-bg: #f0ece4;
+  --cb-pre-bg: #1a1715;
+  --cb-pre-text: #f0ece4;
+  --cb-table-header-bg: #f0ece4;
+  --cb-table-border: #d4cfc8;
+  --cb-system-text: #8a8580;
+  --cb-suggestion-bg: #f0ece4;
+  --cb-suggestion-border: #d4cfc8;
+  --cb-suggestion-text: #1a1715;
+  --cb-input-bg: #faf8f4;
+  --cb-input-border: #d4cfc8;
+  --cb-input-row-bg: #faf8f4;
+  --cb-send-disabled: #9a9590;
+  --cb-image-btn-text: #8a8580;
+  --cb-dot-default: #8a8580;
+  --cb-dot-ready: #2d5f2d;
+  --cb-dot-border: #1a1715;
+  --cb-font: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+  --cb-msg-radius: 6px;
+  --cb-dropdown-bg: #1a1715;
+  --cb-dropdown-text: #faf8f4;
+}
+
+/* Header title in display serif */
+.chatbot-header-title {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+/* Suggestions in sans for label feel */
+.chatbot-suggestion {
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+/* Code blocks in monospace */
+.chatbot-msg.bot code {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+}
+.chatbot-msg.bot pre {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  border: 1px solid #d4cfc8;
+}
+
+/* Input in serif to match body */
+#chatbotInput {
+  font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+}
+
+/* Send button uppercase label */
+#chatbotSend {
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+/* Backend toggle + model selector */
+#chatbotBackendToggle, #chatbotWebllmModel {
+  border-color: rgba(250,248,244,0.25);
+}
+
+/* System messages */
+.chatbot-msg.system {
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 10px;
+}
+
+/* --- Dark mode --- */
+@media (prefers-color-scheme: dark) {
+  #chatbotBubble, #chatbotWindow {
+    --cb-accent: #d4605a;
+    --cb-accent-hover: #b84e49;
+    --cb-bubble-bg: #242018;
+    --cb-bubble-border: 2px solid #3a3630;
+    --cb-header-bg: #242018;
+    --cb-header-text: #e8e4dd;
+    --cb-header-muted: #706c65;
+    --cb-window-bg: #1a1815;
+    --cb-window-radius: 8px;
+    --cb-messages-bg: #242018;
+    --cb-user-bg: #e8e4dd;
+    --cb-user-text: #1a1815;
+    --cb-bot-bg: #1a1815;
+    --cb-bot-text: #e8e4dd;
+    --cb-bot-border: #3a3630;
+    --cb-code-bg: #242018;
+    --cb-pre-bg: #0e0d0b;
+    --cb-pre-text: #e8e4dd;
+    --cb-table-header-bg: #242018;
+    --cb-table-border: #3a3630;
+    --cb-system-text: #706c65;
+    --cb-suggestion-bg: #242018;
+    --cb-suggestion-border: #3a3630;
+    --cb-suggestion-text: #e8e4dd;
+    --cb-input-bg: #1a1815;
+    --cb-input-border: #3a3630;
+    --cb-input-row-bg: #1a1815;
+    --cb-send-disabled: #504c45;
+    --cb-image-btn-text: #706c65;
+    --cb-dot-default: #706c65;
+    --cb-dot-ready: #6aaa6a;
+    --cb-dot-border: #242018;
+    --cb-dropdown-bg: #242018;
+    --cb-dropdown-text: #e8e4dd;
+  }
+  .chatbot-msg.bot pre {
+    border-color: #3a3630;
+  }
+}
+
+</style>
 </head>
 <body>
   <div class="broadsheet">
@@ -120,5 +432,855 @@
     </footer>
 
   </div>
+<!-- Chatbot Bubble -->
+<div id="chatbotBubble" title="Chat with AI Assistant">
+  &#128172;
+  <div id="chatbotDot"></div>
+</div>
+<!-- Chatbot Window -->
+<div id="chatbotWindow">
+  <div class="chatbot-header">
+    <div class="chatbot-header-title">The Amaravati Record</div>
+    <select id="chatbotWebllmModel" title="WebLLM model" style="display:none;"></select>
+    <button id="chatbotBackendToggle" title="Switch backend">&#9729;</button>
+    <button id="chatbotNewChat" title="New conversation">&#8634;</button>
+    <button id="chatbotChangeKey" title="Change API key">&#128273;</button>
+    <button id="chatbotMaximize" title="Maximize">&#9634;</button>
+    <button id="chatbotClose" title="Close">&times;</button>
+  </div>
+  <div id="chatbotMessages"></div>
+  <div id="chatbotImagePreview"></div>
+  <div class="chatbot-input-row">
+    <button id="chatbotImageBtn" title="Attach image (or paste with Ctrl+V)" disabled>&#128247;</button>
+    <textarea id="chatbotInput" rows="1" placeholder="Ask a question..." disabled></textarea>
+    <button id="chatbotSend" disabled>Send</button>
+    <input type="file" id="chatbotFileInput" accept="image/*" style="display:none">
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+// --- Configuration (injected at build time) ---
+const CHATBOT_API_ENDPOINT = '/api/chat';
+const CHATBOT_API_KEY_HEADER = 'api-key';
+const CHATBOT_MODEL = 'gpt-4o';
+const CHATBOT_API_VERSION = '2024-10-21';
+const CHATBOT_PORTAL_URL = '';
+const CHATBOT_WEBLLM_MODELS = ["Phi-3.5-mini-instruct-q4f16_1-MLC", "SmolLM2-1.7B-Instruct-q4f16_1-MLC", "Llama-3.1-8B-Instruct-q4f32_1-MLC", "Qwen2.5-7B-Instruct-q4f16_1-MLC"];
+const CHATBOT_WEBLLM_DEFAULT = 'Phi-3.5-mini-instruct-q4f16_1-MLC';
+const CHATBOT_DEFAULT_BACKEND = 'webllm';
+
+// Detect if served via HTTP (proxy available) or opened from file://
+const USE_PROXY = window.location.protocol.startsWith('http');
+const GENAI_BASE = USE_PROXY ? CHATBOT_API_ENDPOINT : CHATBOT_API_ENDPOINT;
+
+// --- API key management (localStorage, never embedded in HTML) ---
+const API_KEY_STORAGE = 'amaravati_editorial_genai_key';
+
+function getStoredApiKey() {
+  try { return (localStorage.getItem(API_KEY_STORAGE) || '').trim(); }
+  catch(e) { return ''; }
+}
+
+function storeApiKey(key) {
+  try { localStorage.setItem(API_KEY_STORAGE, key.trim()); }
+  catch(e) { /* storage unavailable */ }
+  // Also save to server config so proxy can use it
+  if (USE_PROXY) {
+    fetch('/api/save-key', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({key: key.trim()}),
+    }).catch(function() {});
+  }
+}
+
+function clearStoredApiKey() {
+  try { localStorage.removeItem(API_KEY_STORAGE); }
+  catch(e) {}
+}
+
+function showApiKeyModal(msg) {
+  return new Promise(function(resolve) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
+    const portalLink = CHATBOT_PORTAL_URL
+      ? '<br><a href="' + CHATBOT_PORTAL_URL + '" target="_blank" rel="noopener" style="color:#4cc9f0;">Get your API key here &#8599;</a>'
+      : '';
+    overlay.innerHTML = '<div style="background:#fff;border-radius:12px;padding:28px;max-width:440px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.25);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">' +
+      '<h3 style="margin:0 0 12px;font-size:17px;color:#1a1a2e;">API Key Required</h3>' +
+      (msg ? '<p style="color:#c0392b;font-size:13px;margin:0 0 10px;">' + msg + '</p>' : '') +
+      '<p style="font-size:13px;color:#555;margin:0 0 14px;line-height:1.5;">Enter your API key to enable the AI chatbot.' + portalLink + '</p>' +
+      '<input id="apiKeyInput" type="password" placeholder="Paste your API key" style="width:100%;padding:10px 12px;border:1px solid #dee2e6;border-radius:6px;font-size:14px;margin-bottom:14px;box-sizing:border-box;">' +
+      '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+      '<button id="apiKeyCancel" style="padding:8px 16px;border:1px solid #dee2e6;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;">Cancel</button>' +
+      '<button id="apiKeySave" style="padding:8px 16px;border:none;border-radius:6px;background:#4cc9f0;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Save &amp; Continue</button>' +
+      '</div></div>';
+    document.body.appendChild(overlay);
+    const inp = overlay.querySelector('#apiKeyInput');
+    inp.focus();
+    overlay.querySelector('#apiKeySave').addEventListener('click', function() {
+      const key = inp.value.trim();
+      if (key) { storeApiKey(key); document.body.removeChild(overlay); resolve(key); }
+      else { inp.style.borderColor = '#c0392b'; inp.focus(); }
+    });
+    overlay.querySelector('#apiKeyCancel').addEventListener('click', function() {
+      document.body.removeChild(overlay);
+      resolve('');
+    });
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') overlay.querySelector('#apiKeySave').click();
+    });
+  });
+}
+
+let GENAI_API_KEY = getStoredApiKey();
+
+const SYSTEM_PROMPT = `You are the reader assistant for The Amaravati Record, an independent data-journalism publication covering the construction, politics, and underlying data of Amaravati, Andhra Pradesh's capital city. You are currently on the "Editorial Policy — The Amaravati Record" page.
+
+Publication details:
+- Editor: Sahit Koganti (sahit.koganti@gmail.com)
+- Motto: "Independent reporting on the making of a capital"
+- Key investigation: 57.4% of 47,993 APCRDA land-pooling plots are held by the Kamma community
+- The tracker at https://sahitkogs.github.io/amaravati-tracker-staging/ monitors 20 construction sites
+- Content is CC BY 4.0, data is ODbL 1.0, code is MIT
+
+This page covers editorial standards: independence (no party affiliation, no payment for coverage), sourcing (public data preferred, named sources preferred, anonymous only with specific conditions), verification (every number traceable to dataset line), PII masking, AI disclosure (Gemini for classification only), right of reply, corrections ledger.
+
+Answer concisely using markdown. Be formal but approachable — broadsheet tone, not tabloid. If you don't know something, say so rather than guessing. Direct readers to relevant pages on the site when appropriate.`;
+
+const WELCOME_MSG = "Questions about editorial standards? I can explain sourcing, verification, and conflict-of-interest rules.";
+
+const SUGGESTION_POOL = ["How are sources verified?", "What is the policy on anonymous sources?", "How is AI used in reporting?", "What happens when you find an error?"];
+
+// --- DOM elements ---
+const bubble = document.getElementById('chatbotBubble');
+const chatWindow = document.getElementById('chatbotWindow');
+const dot = document.getElementById('chatbotDot');
+const messagesEl = document.getElementById('chatbotMessages');
+const inputEl = document.getElementById('chatbotInput');
+const sendBtn = document.getElementById('chatbotSend');
+const closeBtn = document.getElementById('chatbotClose');
+const newChatBtn = document.getElementById('chatbotNewChat');
+const changeKeyBtn = document.getElementById('chatbotChangeKey');
+const maximizeBtn = document.getElementById('chatbotMaximize');
+
+const imageBtn = document.getElementById('chatbotImageBtn');
+const fileInput = document.getElementById('chatbotFileInput');
+const imagePreviewEl = document.getElementById('chatbotImagePreview');
+const backendToggleBtn = document.getElementById('chatbotBackendToggle');
+const webllmModelSelect = document.getElementById('chatbotWebllmModel');
+
+let modelReady = false;
+let isLoading = false;
+let isGenerating = false;
+let messages = [];
+let pendingImageBase64 = null;
+
+// --- Backend selection state (cloud vs WebLLM) ---
+const BACKEND_KEY = 'amaravati_editorial_backend';
+const WEBLLM_MODEL_KEY = 'amaravati_editorial_webllm_model';
+let activeBackend = (function() {
+  try { return localStorage.getItem(BACKEND_KEY) || CHATBOT_DEFAULT_BACKEND; }
+  catch(e) { return CHATBOT_DEFAULT_BACKEND; }
+})();
+let webllmSelectedModel = (function() {
+  try { return localStorage.getItem(WEBLLM_MODEL_KEY) || CHATBOT_WEBLLM_DEFAULT; }
+  catch(e) { return CHATBOT_WEBLLM_DEFAULT; }
+})();
+let webllmEngine = null;
+let webllmCurrentModel = null;
+let webllmLoading = false;
+
+const STORAGE_KEY = 'amaravati_editorial_chat_' + location.pathname.split('/').pop();
+
+function saveChat() {
+  try {
+    const textOnly = messages.map(function(m) {
+      const c = typeof m.content === 'string' ? m.content : (m.content.find(function(p) { return p.type === 'text'; }) || {}).text || '';
+      return { role: m.role, content: c };
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(textOnly));
+  } catch(e) { /* quota exceeded — ignore */ }
+}
+
+function loadChat() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    if (!Array.isArray(saved) || saved.length === 0) return false;
+    messages = saved;
+    saved.forEach(function(m) {
+      addMessage(m.role === 'assistant' ? 'bot' : m.role, m.content);
+    });
+    return true;
+  } catch(e) { return false; }
+}
+
+// --- Screen context tracking (works with Plotly charts if present) ---
+const screenContext = {
+  activeTab: '',
+  activeSubplot: null,
+  xAxisRange: null,
+  yAxisRange: null,
+  xAxis2Range: null,
+  yAxis2Range: null,
+  visibleTraces: null,
+  hoveredPoint: null,
+  selectedPoints: [],
+};
+
+// Global hook: call window.updateScreenContextTab(tabId) from your page
+window.updateScreenContextTab = function(tabId) {
+  screenContext.activeTab = tabId;
+};
+
+function _attachPlotlyListeners() {
+  const plotDiv = document.querySelector('.js-plotly-plot') || document.querySelector('[class*="plotly"]');
+  if (!plotDiv || !plotDiv.on) return;
+
+  plotDiv.on('plotly_relayout', function(ed) {
+    if (ed['xaxis.autorange'] || ed.autosize) {
+      screenContext.xAxisRange = null;
+      screenContext.yAxisRange = null;
+    } else {
+      if (ed['xaxis.range[0]'] != null) screenContext.xAxisRange = [ed['xaxis.range[0]'], ed['xaxis.range[1]']];
+      if (ed['yaxis.range[0]'] != null) screenContext.yAxisRange = [ed['yaxis.range[0]'], ed['yaxis.range[1]']];
+    }
+    if (ed['xaxis2.autorange']) {
+      screenContext.xAxis2Range = null;
+      screenContext.yAxis2Range = null;
+    } else {
+      if (ed['xaxis2.range[0]'] != null) screenContext.xAxis2Range = [ed['xaxis2.range[0]'], ed['xaxis2.range[1]']];
+      if (ed['yaxis2.range[0]'] != null) screenContext.yAxis2Range = [ed['yaxis2.range[0]'], ed['yaxis2.range[1]']];
+    }
+  });
+
+  plotDiv.on('plotly_hover', function(data) {
+    const pt = data.points[0];
+    const sub = (pt.yaxis && pt.yaxis._id === 'y2') ? 'subplot-2' : 'subplot-1';
+    screenContext.activeSubplot = sub;
+    screenContext.hoveredPoint = {
+      trace: pt.data.name || '',
+      x: pt.x,
+      y: pt.y,
+      text: pt.text || '',
+      subplot: sub,
+    };
+  });
+  plotDiv.on('plotly_unhover', function() {
+    screenContext.hoveredPoint = null;
+  });
+
+  plotDiv.on('plotly_selected', function(data) {
+    if (!data || !data.points) { screenContext.selectedPoints = []; return; }
+    const pts = data.points.map(function(pt) {
+      return { trace: pt.data.name || '', x: pt.x, y: pt.y, text: pt.text || '' };
+    });
+    screenContext.selectedPoints = pts.length > 10 ? pts.slice(0, 10).concat([{ _more: pts.length - 10 }]) : pts;
+  });
+  plotDiv.on('plotly_deselect', function() {
+    screenContext.selectedPoints = [];
+  });
+
+  plotDiv.on('plotly_legendclick', function() {
+    setTimeout(function() {
+      const traces = plotDiv.data || [];
+      const allNames = new Set();
+      const hiddenNames = new Set();
+      traces.forEach(function(t) {
+        if (t.name) {
+          allNames.add(t.name);
+          if (t.visible === 'legendonly' || t.visible === false) {
+            hiddenNames.add(t.name);
+          }
+        }
+      });
+      const visible = new Set(allNames);
+      hiddenNames.forEach(function(n) { visible.delete(n); });
+      screenContext.visibleTraces = visible.size === allNames.size
+        ? null
+        : Array.from(visible);
+    }, 50);
+  });
+}
+
+setTimeout(_attachPlotlyListeners, 500);
+
+function getScreenContext() {
+  const lines = ['[Screen Context]'];
+  if (screenContext.activeTab) lines.push('Tab: ' + screenContext.activeTab);
+  if (screenContext.activeSubplot) lines.push('Active subplot: ' + screenContext.activeSubplot);
+
+  if (screenContext.xAxisRange) {
+    lines.push('X-axis range: [' + Number(screenContext.xAxisRange[0]).toFixed(2) + ', ' + Number(screenContext.xAxisRange[1]).toFixed(2) + ']');
+  }
+  if (screenContext.yAxisRange) {
+    lines.push('Y-axis range: [' + Number(screenContext.yAxisRange[0]).toFixed(2) + ', ' + Number(screenContext.yAxisRange[1]).toFixed(2) + ']');
+  }
+  if (screenContext.xAxis2Range) {
+    lines.push('X2-axis range: [' + Number(screenContext.xAxis2Range[0]).toFixed(2) + ', ' + Number(screenContext.xAxis2Range[1]).toFixed(2) + ']');
+  }
+  if (screenContext.yAxis2Range) {
+    lines.push('Y2-axis range: [' + Number(screenContext.yAxis2Range[0]).toFixed(2) + ', ' + Number(screenContext.yAxis2Range[1]).toFixed(2) + ']');
+  }
+  if (screenContext.visibleTraces) {
+    lines.push('Visible traces: ' + screenContext.visibleTraces.join(', '));
+  }
+  if (screenContext.hoveredPoint) {
+    const h = screenContext.hoveredPoint;
+    lines.push('Hovered: ' + h.trace + ' at (' + h.x + ', ' + h.y + ')' + (h.text ? ' ' + h.text : ''));
+  }
+  if (screenContext.selectedPoints.length > 0) {
+    const count = screenContext.selectedPoints.length;
+    const hasMore = screenContext.selectedPoints[count - 1] && screenContext.selectedPoints[count - 1]._more;
+    const total = hasMore ? (count - 1 + screenContext.selectedPoints[count - 1]._more) : count;
+    const shown = hasMore ? screenContext.selectedPoints.slice(0, -1) : screenContext.selectedPoints;
+    const desc = shown.map(function(p) { return p.trace + ' (' + p.x + ', ' + p.y + ')'; }).join('; ');
+    lines.push('Selected: ' + total + ' points — ' + desc + (hasMore ? '; ...' + screenContext.selectedPoints[count - 1]._more + ' more' : ''));
+  }
+
+  // --- Page awareness: title, outline, current section, visible text ---
+  try {
+    const title = (document.title || '').trim();
+    if (title) lines.push('Page: ' + title);
+
+    const headings = Array.prototype.slice.call(
+      document.querySelectorAll('h1, h2, h3')
+    ).filter(function(h) { return !h.closest('#chatbotWindow') && !h.closest('#chatbotBubble'); });
+
+    if (headings.length > 0) {
+      const outlineItems = headings
+        .map(function(h) { return (h.textContent || '').trim(); })
+        .filter(Boolean);
+      if (outlineItems.length > 0) {
+        // Cap outline at 25 items to bound size
+        const outlineText = outlineItems.slice(0, 25).join(' | ');
+        lines.push('Outline: ' + outlineText + (outlineItems.length > 25 ? ' | ...' : ''));
+      }
+
+      // Current section: last heading whose top is at or above the upper third of viewport
+      const cutoff = window.innerHeight * 0.33;
+      let currentSection = null;
+      for (let i = 0; i < headings.length; i++) {
+        const rect = headings[i].getBoundingClientRect();
+        if (rect.top <= cutoff) {
+          currentSection = (headings[i].textContent || '').trim();
+        } else {
+          break;
+        }
+      }
+      if (currentSection) lines.push('Current section: ' + currentSection);
+    }
+
+    // Visible viewport text: block-level elements that intersect the viewport
+    const vpHeight = window.innerHeight;
+    const blockSelectors = 'p, li, blockquote, pre, td, th, figcaption, dd, dt, h1, h2, h3, h4, h5, h6';
+    const blocks = document.querySelectorAll(blockSelectors);
+    const visibleParts = [];
+    for (let i = 0; i < blocks.length; i++) {
+      const el = blocks[i];
+      if (el.closest('#chatbotWindow') || el.closest('#chatbotBubble')) continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.height <= 0 || rect.width <= 0) continue;
+      if (rect.bottom < 0 || rect.top > vpHeight) continue;
+      const txt = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (txt) visibleParts.push(txt);
+    }
+    let visible = visibleParts.join('\n');
+    const MAX_VISIBLE = 4000;
+    if (visible.length > MAX_VISIBLE) {
+      const keep = Math.floor(MAX_VISIBLE / 2) - 20;
+      visible = visible.slice(0, keep) + '\n... [truncated] ...\n' + visible.slice(-keep);
+    }
+    if (visible) lines.push('Visible content:\n' + visible);
+  } catch (e) { /* page introspection failed — skip silently */ }
+
+  return lines.length > 1 ? lines.join('\n') : '';
+}
+
+function renderMarkdown(md) {
+  return marked.parse(md);
+}
+
+function addMessage(role, text, imageDataUrl) {
+  const div = document.createElement('div');
+  div.className = 'chatbot-msg ' + role;
+  if (role === 'bot') { div.innerHTML = renderMarkdown(text); }
+  else {
+    div.textContent = text;
+    if (imageDataUrl) {
+      const img = document.createElement('img');
+      img.src = imageDataUrl;
+      div.appendChild(img);
+    }
+  }
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div;
+}
+
+function attachImage(base64WithPrefix) {
+  pendingImageBase64 = base64WithPrefix;
+  imagePreviewEl.style.display = 'block';
+  imagePreviewEl.innerHTML = '<div class="preview-wrap">' +
+    '<img src="' + base64WithPrefix + '">' +
+    '<button class="preview-remove" title="Remove image">&times;</button></div>';
+  imagePreviewEl.querySelector('.preview-remove').addEventListener('click', function() {
+    clearImagePreview();
+  });
+}
+
+function clearImagePreview() {
+  pendingImageBase64 = null;
+  imagePreviewEl.style.display = 'none';
+  imagePreviewEl.innerHTML = '';
+  fileInput.value = '';
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise(function(resolve) {
+    const reader = new FileReader();
+    reader.onload = function() { resolve(reader.result); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function pickRandomSuggestions(count) {
+  const pool = SUGGESTION_POOL.slice();
+  const picks = [];
+  while (picks.length < count && pool.length > 0) {
+    const i = Math.floor(Math.random() * pool.length);
+    picks.push(pool.splice(i, 1)[0]);
+  }
+  return picks;
+}
+
+function addWelcome() {
+  const div = document.createElement('div');
+  div.className = 'chatbot-msg bot';
+  div.style.whiteSpace = 'pre-wrap';
+  div.textContent = WELCOME_MSG;
+  messagesEl.appendChild(div);
+  const chips = document.createElement('div');
+  chips.className = 'chatbot-suggestions';
+  pickRandomSuggestions(4).forEach(function(q) {
+    const btn = document.createElement('button');
+    btn.className = 'chatbot-suggestion';
+    btn.textContent = q;
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      messagesEl.querySelectorAll('.chatbot-suggestions').forEach(function(el) { el.remove(); });
+      inputEl.value = q;
+      sendMessage();
+    });
+    chips.appendChild(btn);
+  });
+  messagesEl.appendChild(chips);
+}
+
+function setInputEnabled(enabled) {
+  inputEl.disabled = !enabled;
+  sendBtn.disabled = !enabled;
+  imageBtn.disabled = !enabled;
+  if (enabled) inputEl.focus();
+}
+
+function openChat() {
+  chatWindow.classList.add('open');
+  bubble.classList.add('hidden');
+  if (messagesEl.children.length === 0) {
+    if (!loadChat()) addWelcome();
+  }
+  if (!modelReady && !isLoading) loadModel();
+  if (modelReady) inputEl.focus();
+}
+
+function closeChat() {
+  chatWindow.classList.remove('open', 'maximized');
+  bubble.classList.remove('hidden');
+  maximizeBtn.innerHTML = '&#9634;';
+  maximizeBtn.title = 'Maximize';
+}
+
+function loadModel() {
+  isLoading = true;
+  if (activeBackend === 'webllm') {
+    modelReady = true;
+    addMessage('system', 'Assistant ready (Local WebLLM). First message will download the model.');
+    setInputEnabled(true);
+    isLoading = false;
+    refreshBackendUI();
+    return;
+  }
+  if (!GENAI_API_KEY) {
+    showApiKeyModal('').then(function(key) {
+      isLoading = false;
+      if (key) {
+        GENAI_API_KEY = key;
+        modelReady = true;
+        dot.classList.add('ready');
+        addMessage('system', 'Assistant ready. Ask me anything!');
+        setInputEnabled(true);
+      } else {
+        addMessage('system', 'API key required. Click the key button in the header to set your API key.');
+      }
+    });
+    return;
+  }
+  modelReady = true;
+  dot.classList.add('ready');
+  addMessage('system', 'Assistant ready. Ask me anything!');
+  setInputEnabled(true);
+  isLoading = false;
+}
+
+async function ensureWebLLMEngine(modelId) {
+  if (webllmEngine && webllmCurrentModel === modelId) return webllmEngine;
+  if (webllmLoading) throw new Error('WebLLM is still loading, please wait.');
+  webllmLoading = true;
+  dot.classList.remove('ready');
+  const sysMsg = addMessage('system', 'Loading WebLLM runtime...');
+  try {
+    if (!('gpu' in navigator)) {
+      throw new Error('WebGPU not available in this browser. Use the Cloud backend instead.');
+    }
+    const mod = await import('https://esm.run/@mlc-ai/web-llm@0.2');
+    // chatOpts: enable sliding-window attention so long system prompts +
+    // visible-content captures + multi-turn history don't overflow the
+    // compiled context window (many MLC builds ship with 4096).
+    const chatOpts = {
+      context_window_size: -1,
+      sliding_window_size: 4096,
+      attention_sink_size: 4,
+    };
+    webllmEngine = await mod.CreateMLCEngine(modelId, {
+      initProgressCallback: function(p) {
+        const pct = (p.progress * 100).toFixed(0);
+        sysMsg.textContent = 'Loading ' + modelId + ': ' + pct + '% - ' + (p.text || '');
+      },
+    }, chatOpts);
+    webllmCurrentModel = modelId;
+    sysMsg.textContent = modelId + ' ready.';
+    if (activeBackend === 'webllm') dot.classList.add('ready');
+    return webllmEngine;
+  } finally {
+    webllmLoading = false;
+  }
+}
+
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  const imageData = pendingImageBase64;
+  if ((!text && !imageData) || !modelReady || isGenerating) return;
+
+  if (activeBackend === 'openai' && !GENAI_API_KEY) {
+    const newKey = await showApiKeyModal('No API key found. Please enter your API key to use the assistant:');
+    if (newKey) {
+      GENAI_API_KEY = newKey;
+    } else {
+      addMessage('system', 'API key required. Click the key button in the header to set your API key.');
+      return;
+    }
+  }
+
+  addMessage('user', text || '(image)', imageData);
+  inputEl.value = '';
+  inputEl.style.height = 'auto';
+  clearImagePreview();
+  setInputEnabled(false);
+  isGenerating = true;
+
+  // Build user content: text-only or multimodal (text + image)
+  const ctxBlock = getScreenContext();
+  const textForApi = ctxBlock ? ctxBlock + '\n\n' + text : text;
+  let userContent;
+  if (imageData) {
+    userContent = [];
+    if (text) userContent.push({ type: 'text', text: textForApi || text });
+    userContent.push({ type: 'image_url', image_url: { url: imageData, detail: 'low' } });
+  } else {
+    userContent = textForApi || text;
+  }
+  messages.push({ role: 'user', content: userContent });
+  const botDiv = addMessage('bot', '');
+
+  try {
+    const apiMessages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...messages.slice(-10)
+    ];
+
+    let assistantContent = '';
+
+    if (activeBackend === 'webllm') {
+      const engine = await ensureWebLLMEngine(webllmSelectedModel);
+      const chunks = await engine.chat.completions.create({
+        stream: true,
+        messages: apiMessages,
+        temperature: 0.7,
+        max_tokens: 1024,
+      });
+      for await (const chunk of chunks) {
+        const delta = chunk.choices && chunk.choices[0] && chunk.choices[0].delta;
+        if (delta && delta.content) {
+          assistantContent += delta.content;
+          botDiv.innerHTML = renderMarkdown(assistantContent);
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+      }
+
+      if (!assistantContent) botDiv.textContent = '(No response generated)';
+      messages.push({ role: 'assistant', content: assistantContent });
+      if (messages.length > 10) messages = messages.slice(-10);
+      saveChat();
+      return;
+    }
+
+    const reqHeaders = { 'Content-Type': 'application/json' };
+    if (GENAI_API_KEY) reqHeaders[CHATBOT_API_KEY_HEADER] = GENAI_API_KEY;
+
+    const reqBody = { messages: apiMessages, max_completion_tokens: 1024, temperature: 0.7, stream: true };
+    if (USE_PROXY) { reqBody.model = CHATBOT_MODEL; reqBody.api_version = CHATBOT_API_VERSION; }
+
+    const response = await fetch(GENAI_BASE, {
+      method: 'POST',
+      headers: reqHeaders,
+      body: JSON.stringify(reqBody)
+    });
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      if (response.status === 401 || response.status === 403) {
+        clearStoredApiKey();
+        GENAI_API_KEY = '';
+        const newKey = await showApiKeyModal('Your API key was rejected (HTTP ' + response.status + '). Please enter a valid key:');
+        if (newKey) {
+          GENAI_API_KEY = newKey;
+          botDiv.textContent = 'API key updated. Please resend your message.';
+        } else {
+          botDiv.textContent = 'API key required. Click the key button in the header to set your API key.';
+        }
+        messages.pop();
+        throw new Error('_handled');
+      }
+      throw new Error('API error ' + response.status + ': ' + errBody);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ') || line === 'data: [DONE]') continue;
+        try {
+          const json = JSON.parse(line.slice(6));
+          const delta = json.choices && json.choices[0] && json.choices[0].delta;
+          if (delta && delta.content) {
+            assistantContent += delta.content;
+            botDiv.innerHTML = renderMarkdown(assistantContent);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+          }
+        } catch (e) { /* skip malformed SSE */ }
+      }
+    }
+
+    if (!assistantContent) {
+      botDiv.textContent = '(No response generated)';
+    }
+    messages.push({ role: 'assistant', content: assistantContent });
+
+    if (messages.length > 10) {
+      messages = messages.slice(-10);
+    }
+    saveChat();
+  } catch (err) {
+    if (err.message === '_handled') { /* already handled above */ }
+    else if (activeBackend === 'webllm') {
+      const detail = (err && err.message) ? err.message.replace(/[<>&]/g, '') : 'Unknown error';
+      botDiv.innerHTML = renderMarkdown(
+        '**WebLLM error:** ' + detail + '\n\n' +
+        'If this persists, click the cloud icon in the header to switch to the Cloud backend.'
+      );
+      messages.pop();
+    }
+    else if (!USE_PROXY && (err instanceof TypeError || err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('Load failed'))) {
+      botDiv.innerHTML = renderMarkdown(
+        '**Cannot connect to AI service** (CORS restriction).\n\n' +
+        'When opening the report as a local file, the browser blocks direct API calls.\n\n' +
+        'To use the AI chatbot, double-click **open_report.bat** in the same folder as this report. ' +
+        'This starts a small local server that proxies requests to the AI service.'
+      );
+    } else {
+      const detail = err.message || 'Unknown error';
+      if (!USE_PROXY) {
+        botDiv.innerHTML = renderMarkdown(
+          '**Error:** ' + detail.replace(/[<>&]/g, '') + '\n\n' +
+          'If this persists, try:\n' +
+          '- Click the key button in the header to check/change your API key\n' +
+          '- Or double-click **open_report.bat** to open via the local proxy server'
+        );
+      } else {
+        botDiv.innerHTML = renderMarkdown(
+          '**Error:** ' + detail.replace(/[<>&]/g, '') + '\n\n' +
+          'If this persists, click the key button in the header to verify your API key.'
+        );
+      }
+    }
+  } finally {
+    isGenerating = false;
+    setInputEnabled(true);
+    refreshBackendUI();
+  }
+}
+
+function newConversation() {
+  messages = [];
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  messagesEl.innerHTML = '';
+  clearImagePreview();
+  addWelcome();
+  if (modelReady) {
+    addMessage('system', activeBackend === 'webllm'
+      ? 'Assistant ready (Local WebLLM). First message will download the model.'
+      : 'Assistant ready. Ask me anything!');
+    setInputEnabled(true);
+  }
+  refreshBackendUI();
+}
+
+function refreshBackendUI() {
+  if (!backendToggleBtn) return;
+  if (CHATBOT_WEBLLM_MODELS.length === 0) {
+    backendToggleBtn.style.display = 'none';
+    webllmModelSelect.style.display = 'none';
+    return;
+  }
+  const isWebllm = activeBackend === 'webllm';
+  backendToggleBtn.innerHTML = isWebllm ? '&#9881;' : '&#9729;';
+  backendToggleBtn.title = isWebllm
+    ? 'Local (WebLLM) - click to switch to Cloud'
+    : 'Cloud - click to switch to Local (WebLLM)';
+  webllmModelSelect.style.display = isWebllm ? 'inline-block' : 'none';
+  changeKeyBtn.disabled = isWebllm;
+  imageBtn.disabled = isWebllm;
+  imageBtn.title = isWebllm
+    ? 'Image input requires the Cloud backend'
+    : 'Attach image (or paste with Ctrl+V)';
+  if (isWebllm) {
+    if (webllmEngine && webllmCurrentModel === webllmSelectedModel) {
+      dot.classList.add('ready');
+    } else {
+      dot.classList.remove('ready');
+    }
+  } else {
+    if (GENAI_API_KEY) dot.classList.add('ready');
+    else dot.classList.remove('ready');
+  }
+}
+
+function initBackendUI() {
+  if (!webllmModelSelect) return;
+  webllmModelSelect.innerHTML = '';
+  CHATBOT_WEBLLM_MODELS.forEach(function(m) {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m.split('-').slice(0, 3).join('-');
+    if (m === webllmSelectedModel) opt.selected = true;
+    webllmModelSelect.appendChild(opt);
+  });
+  webllmModelSelect.addEventListener('change', function() {
+    webllmSelectedModel = webllmModelSelect.value;
+    try { localStorage.setItem(WEBLLM_MODEL_KEY, webllmSelectedModel); } catch(e) {}
+    webllmEngine = null;
+    webllmCurrentModel = null;
+    addMessage('system', 'WebLLM model changed to ' + webllmSelectedModel + '. Next message will load it.');
+    refreshBackendUI();
+  });
+  backendToggleBtn.addEventListener('click', function() {
+    if (isGenerating || webllmLoading) return;
+    activeBackend = activeBackend === 'webllm' ? 'openai' : 'webllm';
+    try { localStorage.setItem(BACKEND_KEY, activeBackend); } catch(e) {}
+    refreshBackendUI();
+    addMessage('system', 'Backend: ' + (activeBackend === 'webllm' ? 'Local (WebLLM)' : 'Cloud'));
+  });
+  refreshBackendUI();
+}
+
+initBackendUI();
+
+inputEl.addEventListener('input', function() {
+  inputEl.style.height = 'auto';
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + 'px';
+});
+
+bubble.addEventListener('click', openChat);
+closeBtn.addEventListener('click', closeChat);
+newChatBtn.addEventListener('click', newConversation);
+changeKeyBtn.addEventListener('click', async function() {
+  const key = await showApiKeyModal('Enter a new API key:');
+  if (key) {
+    GENAI_API_KEY = key;
+    if (!modelReady) {
+      modelReady = true;
+      dot.classList.add('ready');
+      addMessage('system', 'Assistant ready. Ask me anything!');
+      setInputEnabled(true);
+    } else {
+      addMessage('system', 'API key updated.');
+    }
+  }
+});
+maximizeBtn.addEventListener('click', function() {
+  const isMax = chatWindow.classList.toggle('maximized');
+  maximizeBtn.innerHTML = isMax ? '&#9645;' : '&#9634;';
+  maximizeBtn.title = isMax ? 'Restore' : 'Maximize';
+});
+sendBtn.addEventListener('click', sendMessage);
+document.addEventListener('click', function(e) {
+  if (chatWindow.classList.contains('open') && !chatWindow.contains(e.target) && !bubble.contains(e.target)) {
+    if (e.target.closest('.tabs, .tab-content, .plotly, .js-plotly-plot, .modebar')) return;
+    closeChat();
+  }
+});
+inputEl.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// Image paste (Ctrl+V)
+inputEl.addEventListener('paste', async function(e) {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf('image') !== -1) {
+      e.preventDefault();
+      const file = items[i].getAsFile();
+      const dataUrl = await readFileAsDataUrl(file);
+      attachImage(dataUrl);
+      return;
+    }
+  }
+});
+
+// Image file picker
+imageBtn.addEventListener('click', function() { fileInput.click(); });
+fileInput.addEventListener('change', async function() {
+  if (fileInput.files && fileInput.files[0]) {
+    const dataUrl = await readFileAsDataUrl(fileInput.files[0]);
+    attachImage(dataUrl);
+  }
+});
+
+</script>
 </body>
 </html>
