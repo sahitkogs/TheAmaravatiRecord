@@ -240,16 +240,16 @@
     width: 48px; height: 48px; font-size: 22px;
   }
   #chatbotMaximize { display: none !important; }
-  .chatbot-header { padding: 10px 14px; gap: 6px; }
-  .chatbot-header-title { font-size: 15px; }
-  .chatbot-header button { font-size: 16px; padding: 2px 4px; }
-  #chatbotMessages { padding: 14px; font-size: 15px; }
-  .chatbot-msg { font-size: 15px; line-height: 1.55; }
-  .chatbot-msg.bot code { font-size: 13.5px; }
+  .chatbot-header { padding: 14px 16px; gap: 8px; }
+  .chatbot-header-title { font-size: 18px; }
+  .chatbot-header button { font-size: 22px; padding: 4px 6px; }
+  #chatbotMessages { padding: 14px; font-size: 16px; }
+  .chatbot-msg { font-size: 16px; line-height: 1.6; }
+  .chatbot-msg.bot code { font-size: 14px; }
   .chatbot-input-row { padding: 12px 14px; }
-  #chatbotInput { font-size: 15px; }
-  .chatbot-suggestion { font-size: 12px; padding: 6px 12px; }
-  .chatbot-msg.system { font-size: 11px; }
+  #chatbotInput { font-size: 16px; }
+  .chatbot-suggestion { font-size: 13px; padding: 7px 14px; }
+  .chatbot-msg.system { font-size: 12px; }
 }
 
 </style>
@@ -963,6 +963,23 @@ function setInputEnabled(enabled) {
 
 var isMobile = window.matchMedia('(max-width: 600px)').matches;
 
+// Handle mobile keyboard resize — keep chat window visible when keyboard opens
+if (isMobile && window.visualViewport) {
+  window.visualViewport.addEventListener('resize', function() {
+    if (!chatWindow.classList.contains('open')) return;
+    var vvh = window.visualViewport.height;
+    chatWindow.style.height = (vvh - 72) + 'px';
+    chatWindow.style.bottom = '72px';
+    chatWindow.style.top = 'auto';
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  });
+  window.visualViewport.addEventListener('scroll', function() {
+    if (!chatWindow.classList.contains('open')) return;
+    // Prevent visual viewport scroll from shifting the chat
+    chatWindow.style.top = 'auto';
+  });
+}
+
 function openChat() {
   chatWindow.classList.add('open');
   bubble.classList.add('hidden');
@@ -1324,7 +1341,10 @@ inputEl.addEventListener('input', function() {
   inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + 'px';
 });
 
-bubble.addEventListener('click', openChat);
+bubble.addEventListener('click', function() {
+  if (chatWindow.classList.contains('open')) closeChat();
+  else openChat();
+});
 closeBtn.addEventListener('click', closeChat);
 newChatBtn.addEventListener('click', newConversation);
 changeKeyBtn.addEventListener('click', async function() {
