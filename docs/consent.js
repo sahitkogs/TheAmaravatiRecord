@@ -17,7 +17,7 @@
   // clicking "Accept" will do nothing (no network request is made)
   // because the script loader guards against the placeholder.
   // ----------------------------------------------------------------
-  var GA4_MEASUREMENT_ID = 'G-PLACEHOLDER';
+  var GA4_MEASUREMENT_ID = 'G-E1WVK9GMFP';
   var STORAGE_KEY = 'amaravatirecord_consent_v1';
 
   // ----------------------------------------------------------------
