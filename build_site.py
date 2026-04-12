@@ -271,7 +271,7 @@ def build_page(name: str) -> None:
         suggestions=cfg["suggestions"],
         default_backend="webllm",
         custom_css=THEME_NEWSPAPER,
-        storage_prefix=f"amaravati_{name}",
+        storage_prefix="amaravati",
     )
 
     dst.write_text(html, encoding="utf-8")

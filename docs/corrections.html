@@ -520,7 +520,7 @@ const USE_PROXY = window.location.protocol.startsWith('http');
 const GENAI_BASE = USE_PROXY ? CHATBOT_API_ENDPOINT : CHATBOT_API_ENDPOINT;
 
 // --- API key management (localStorage, never embedded in HTML) ---
-const API_KEY_STORAGE = 'amaravati_corrections_genai_key';
+const API_KEY_STORAGE = 'amaravati_genai_key';
 
 function getStoredApiKey() {
   try { return (localStorage.getItem(API_KEY_STORAGE) || '').trim(); }
@@ -623,8 +623,8 @@ let messages = [];
 let pendingImageBase64 = null;
 
 // --- Backend selection state (cloud vs WebLLM) ---
-const BACKEND_KEY = 'amaravati_corrections_backend';
-const WEBLLM_MODEL_KEY = 'amaravati_corrections_webllm_model';
+const BACKEND_KEY = 'amaravati_backend';
+const WEBLLM_MODEL_KEY = 'amaravati_webllm_model';
 let activeBackend = (function() {
   try { return localStorage.getItem(BACKEND_KEY) || CHATBOT_DEFAULT_BACKEND; }
   catch(e) { return CHATBOT_DEFAULT_BACKEND; }
@@ -637,7 +637,7 @@ let webllmEngine = null;
 let webllmCurrentModel = null;
 let webllmLoading = false;
 
-const STORAGE_KEY = 'amaravati_corrections_chat_' + location.pathname.split('/').pop();
+const STORAGE_KEY = 'amaravati_chat_' + location.pathname.split('/').pop();
 
 function saveChat() {
   try {
