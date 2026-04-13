@@ -1104,6 +1104,15 @@ function loadModel() {
     return;
   }
   if (!GENAI_API_KEY) {
+    // If WebGPU isn't available (e.g. iPhone), don't prompt for API key —
+    // just let the user browse with suggestions but no live AI
+    if (!('gpu' in navigator)) {
+      isLoading = false;
+      modelReady = false;
+      addMessage('system', 'Local AI is not available on this device. Use the suggestion chips to explore, or try on a desktop browser for live AI responses.');
+      setInputEnabled(false);
+      return;
+    }
     showApiKeyModal('').then(function(key) {
       isLoading = false;
       if (key) {
@@ -1514,14 +1523,22 @@ fileInput.addEventListener('change', async function() {
   }
 });
 
-// --- Preload WebLLM on page load (silent, in background) ---
+// --- Early WebGPU detection + preload ---
+// If WebGPU is unavailable (iOS Safari, older browsers), silently fall back
+// to Cloud backend so the user never sees a WebLLM error.
+if (activeBackend === 'webllm' && !('gpu' in navigator)) {
+  console.info('[chatbot] WebGPU not available — falling back to Cloud backend');
+  activeBackend = 'openai';
+  try { localStorage.setItem(BACKEND_KEY, activeBackend); } catch(e) {}
+  refreshBackendUI();
+}
+
+// Preload WebLLM on page load (silent, in background)
 if (activeBackend === 'webllm' && CHATBOT_WEBLLM_MODELS.length > 0) {
-  // Start loading immediately so the model is ready by the time user chats
   ensureWebLLMEngine(webllmSelectedModel, true).then(function() {
     modelReady = true;
     setInputEnabled(true);
     refreshBackendUI();
-    // Update any "Preparing assistant..." message in the chat to show ready
     var sysMsgs = messagesEl.querySelectorAll('.chatbot-msg.system');
     for (var i = 0; i < sysMsgs.length; i++) {
       if (sysMsgs[i].textContent.indexOf('Preparing') !== -1) {
@@ -1529,7 +1546,6 @@ if (activeBackend === 'webllm' && CHATBOT_WEBLLM_MODELS.length > 0) {
       }
     }
   }).catch(function(err) {
-    // Silent preload failed — user will see the error on first message instead
     console.warn('[chatbot] WebLLM preload failed:', err.message);
   });
 }
