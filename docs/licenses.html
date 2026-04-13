@@ -963,7 +963,7 @@ function renderWithThinking(raw, botDiv) {
   var html = '';
   if (before) html += renderMarkdown(before);
   html += '<div class="chatbot-think-block ' + state + '">';
-  html += '<div class="chatbot-think-toggle" onclick="this.parentElement.classList.toggle('collapsed');this.parentElement.classList.toggle('expanded');">';
+  html += '<div class="chatbot-think-toggle" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;);this.parentElement.classList.toggle(&quot;expanded&quot;);">';
   html += '<span class="arrow">&#9656;</span> ' + label;
   html += '</div>';
   html += '<div class="chatbot-think-content">' + renderMarkdown(thinkContent) + '</div>';
