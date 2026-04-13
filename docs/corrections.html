@@ -1201,26 +1201,42 @@ async function sendMessage() {
   setInputEnabled(false);
   isGenerating = true;
 
-  // Build user content: text-only or multimodal (text + image)
-  const ctxBlock = getScreenContext();
-  const textForApi = ctxBlock ? ctxBlock + '\n\n' + text : text;
-  let userContent;
+  // Save user's original text in messages (for localStorage persistence).
+  // Screen context is ephemeral and captured fresh for the API call only.
+  let savedContent;
   if (imageData) {
-    userContent = [];
-    if (text) userContent.push({ type: 'text', text: textForApi || text });
-    userContent.push({ type: 'image_url', image_url: { url: imageData, detail: 'low' } });
+    savedContent = [];
+    if (text) savedContent.push({ type: 'text', text: text });
+    savedContent.push({ type: 'image_url', image_url: { url: imageData, detail: 'low' } });
   } else {
-    userContent = textForApi || text;
+    savedContent = text;
   }
-  messages.push({ role: 'user', content: userContent });
+  messages.push({ role: 'user', content: savedContent });
   const botDiv = addMessage('bot', '');
   botDiv.innerHTML = '<div class="chatbot-typing"><span></span><span></span><span></span></div>';
   thinkStartTime = 0;
 
   try {
+    // Build API messages with screen context prepended to the latest user message
+    const ctxBlock = getScreenContext();
     const apiMessages = [
       { role: 'system', content: SYSTEM_PROMPT },
-      ...messages.slice(-10)
+      ...messages.slice(-10).map(function(m, i, arr) {
+        // Prepend screen context only to the last user message
+        if (i === arr.length - 1 && m.role === 'user' && ctxBlock) {
+          if (typeof m.content === 'string') {
+            return { role: 'user', content: ctxBlock + '\n\n' + m.content };
+          } else {
+            // Multimodal: prepend context to the first text part
+            var parts = m.content.map(function(p, j) {
+              if (j === 0 && p.type === 'text') return { type: 'text', text: ctxBlock + '\n\n' + p.text };
+              return p;
+            });
+            return { role: 'user', content: parts };
+          }
+        }
+        return m;
+      })
     ];
 
     let assistantContent = '';
