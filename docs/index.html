@@ -1019,8 +1019,18 @@ function getScreenContext() {
   return lines.length > 1 ? lines.join('\n') : '';
 }
 
+function stripThinkTags(text) {
+  // Strip <think>...</think> blocks (Qwen3 reasoning tokens)
+  // Handle both complete and in-progress blocks during streaming
+  var result = text.replace(/<think>[\s\S]*?<\/think>\s*/g, '');
+  // If a <think> block is still open (streaming), hide everything from <think> onward
+  var openIdx = result.indexOf('<think>');
+  if (openIdx !== -1) result = result.slice(0, openIdx);
+  return result.trim();
+}
+
 function renderMarkdown(md) {
-  return marked.parse(md);
+  return marked.parse(stripThinkTags(md));
 }
 
 function addMessage(role, text, imageDataUrl) {
@@ -1317,8 +1327,9 @@ async function sendMessage() {
         }
       }
 
-      if (!assistantContent) botDiv.textContent = '(No response generated)';
-      messages.push({ role: 'assistant', content: assistantContent });
+      var cleanContent = stripThinkTags(assistantContent);
+      if (!cleanContent) botDiv.textContent = '(No response generated)';
+      messages.push({ role: 'assistant', content: cleanContent });
       if (messages.length > 10) messages = messages.slice(-10);
       saveChat();
       return;
@@ -1378,10 +1389,11 @@ async function sendMessage() {
       }
     }
 
-    if (!assistantContent) {
+    var cleanContent2 = stripThinkTags(assistantContent);
+    if (!cleanContent2) {
       botDiv.textContent = '(No response generated)';
     }
-    messages.push({ role: 'assistant', content: assistantContent });
+    messages.push({ role: 'assistant', content: cleanContent2 });
 
     if (messages.length > 10) {
       messages = messages.slice(-10);
