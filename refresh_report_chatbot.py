@@ -16,7 +16,7 @@ from pathlib import Path
 from chatbot_in_html import inject_chatbot
 from chatbot_in_html.themes import THEME_NEWSPAPER
 
-REPORTS_DIR = Path(__file__).parent / "docs" / "reports"
+REPORTS_DIR = Path(__file__).parent / "docs" / "en" / "reports"
 
 REPORTS = {
     "lps-caste-dashboard.html": {

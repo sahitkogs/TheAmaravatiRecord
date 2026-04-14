@@ -244,12 +244,13 @@ Academic partnerships welcomed (no fees).""",
 
 
 def build_page(name: str) -> None:
-    """Read docs/{name}.src.html, inject chatbot, write docs/{name}.html."""
-    # index lives at docs/ root; everything else lives under docs/pages/
+    """Read docs/en/{name}.src.html, inject chatbot, write docs/en/{name}.html."""
+    # index lives at docs/en/ root; everything else lives under docs/en/pages/
+    en_dir = DOCS_DIR / "en"
     if name == "index":
-        page_dir = DOCS_DIR
+        page_dir = en_dir
     else:
-        page_dir = DOCS_DIR / "pages"
+        page_dir = en_dir / "pages"
     src = page_dir / f"{name}.src.html"
     dst = page_dir / f"{name}.html"
 
