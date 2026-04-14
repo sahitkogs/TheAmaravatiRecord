@@ -92,9 +92,9 @@ def build_html(plots, stats, plot_geodata, surname_count=0, mask_pii=False):
 }}
 *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
 html {{ overflow-x: hidden; }}
-body {{ font-family: var(--font-body); font-size: 15px; line-height: 1.6; color: var(--ink); background: var(--paper); max-width: 100vw; overflow-x: hidden; }}
+body {{ font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--ink); background: var(--paper); max-width: 100vw; overflow-x: hidden; }}
 
-.container {{ max-width: 1000px; width: 100%; margin: 0 auto; padding: 20px 40px; overflow-x: hidden; }}
+.container {{ max-width: 1100px; width: 100%; margin: 0 auto; padding: 20px 40px; overflow-x: hidden; }}
 
 /* Masthead */
 .masthead {{ text-align: center; border-top: 3px solid var(--rule); padding: 10px 0; margin-bottom: 16px; }}
