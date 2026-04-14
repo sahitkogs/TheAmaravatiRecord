@@ -23,9 +23,9 @@ html[lang="te"] .masthead__tagline {
 }
 
 html[lang="te"] .masthead__title {
-  font-size: clamp(32px, 7vw, 64px) !important;
-  padding-right: 16px !important;
-  word-break: keep-all !important;
+  font-size: clamp(32px, 7vw, 60px) !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
 }
 
 html[lang="te"] .masthead__meta,
