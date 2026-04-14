@@ -254,7 +254,7 @@ tr:hover td {{ background: var(--paper-tinted); }}
 }}
 </style>
 <link rel="stylesheet" href="../site-header.css">
-<script src="../site-header.js"></script>
+<script src="../site-header.js?v=2"></script>
 </head>
 <body>
 <div class="container">
