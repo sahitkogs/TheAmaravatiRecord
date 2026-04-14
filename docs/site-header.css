@@ -85,6 +85,50 @@
 .nav a:hover { background: var(--paper-tinted) !important; }
 .nav a.is-current { color: var(--red) !important; }
 
+/* ---- Ticker ---- */
+.ticker {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  padding: 8px 0 !important;
+  font-family: var(--font-sans) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  margin-bottom: 22px !important;
+}
+
+.ticker__track {
+  display: inline-flex !important;
+  align-items: center !important;
+  animation: ticker-scroll 50s linear infinite !important;
+}
+
+.ticker:hover .ticker__track { animation-play-state: paused !important; }
+
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker__item { flex-shrink: 0 !important; }
+.ticker__sep {
+  flex-shrink: 0 !important;
+  color: var(--red) !important;
+  margin: 0 16px !important;
+  font-size: 8px !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ticker {
+    background: var(--paper-tinted) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--rule-light) !important;
+  }
+}
+
 /* ---- Footer ---- */
 .colophon {
   display: flex !important;
