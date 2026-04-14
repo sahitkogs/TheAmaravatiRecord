@@ -129,10 +129,25 @@ html[data-theme="dark"] .site-bar {
   border-bottom-color: #333 !important;
 }
 
+/* ---- Sticky header + ticker ---- */
+#site-masthead {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  background: var(--paper) !important;
+  padding-top: 2px !important;
+}
+
+.ticker {
+  position: sticky !important;
+  z-index: 999 !important;
+  /* top is set dynamically by JS based on header height */
+}
+
 /* Force consistent top spacing on all page wrappers */
 .broadsheet,
 .container {
-  padding-top: 2px !important;
+  padding-top: 0 !important;
 }
 
 /* ================================================================

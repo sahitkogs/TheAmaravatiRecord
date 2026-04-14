@@ -167,6 +167,14 @@ var AndhraRecord = (function () {
       }
     }
 
+    // ── Sticky ticker: set top dynamically based on header height ──
+    if (mastheadEl) {
+      var ticker = document.querySelector('.ticker');
+      if (ticker) {
+        ticker.style.top = mastheadEl.offsetHeight + 'px';
+      }
+    }
+
     // ── Footer ──
     var footerEl = document.getElementById('site-footer');
     if (footerEl) {
