@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build The Amaravati Record site pages with chatbot injection.
+"""Build Andhra Record site pages with chatbot injection.
 
 Reads .src.html files (index from docs/, others from docs/pages/), injects a
 broadsheet-themed chatbot widget into each, and writes the compiled .html
@@ -24,7 +24,7 @@ DOCS_DIR = Path(__file__).parent / "docs"
 # ---------------------------------------------------------------------------
 
 BASE_PROMPT = """\
-You are the reader assistant for The Amaravati Record, an independent \
+You are the reader assistant for Andhra Record, an independent \
 data-journalism publication covering the construction, politics, and \
 underlying data of Amaravati, Andhra Pradesh's capital city. \
 You are currently on the "{page_title}" page.
@@ -44,8 +44,8 @@ Direct readers to relevant pages on the site when appropriate."""
 
 PAGES = {
     "index": {
-        "title": "Home — The Amaravati Record",
-        "welcome": "Welcome to The Amaravati Record. Ask me about our investigations, the capital tracker, or how to navigate the site.",
+        "title": "Home — Andhra Record",
+        "welcome": "Welcome to Andhra Record. Ask me about our investigations, the capital tracker, or how to navigate the site.",
         "suggestions": [
             "What does this publication cover?",
             "Summarize the main investigation",
@@ -61,8 +61,8 @@ full investigations, the Methodology page for the data pipeline, and the About p
 for background on the newsroom.""",
     },
     "about": {
-        "title": "About — The Amaravati Record",
-        "welcome": "Questions about The Amaravati Record? I can explain our coverage, methodology, and editorial approach.",
+        "title": "About — Andhra Record",
+        "welcome": "Questions about Andhra Record? I can explain our coverage, methodology, and editorial approach.",
         "suggestions": [
             "Who runs this publication?",
             "What does 'independent' mean here?",
@@ -77,7 +77,7 @@ corpus (5,548 entries from 19 sources), Gemini 2.5 Flash per-name classifier, \
 99.6% classification rate. PII is masked. Content is CC BY 4.0.""",
     },
     "reports": {
-        "title": "Reports — The Amaravati Record",
+        "title": "Reports — Andhra Record",
         "welcome": "Looking for a specific report? I can help you find the right investigation or dataset.",
         "suggestions": [
             "What reports are available?",
@@ -93,7 +93,7 @@ village-by-village breakdown of 47,993 plots across 26 villages, mobile-friendly
 feeds. The methodology page explains the full data pipeline.""",
     },
     "methodology": {
-        "title": "Methodology — The Amaravati Record",
+        "title": "Methodology — Andhra Record",
         "welcome": "Ask me about the data pipeline, sources, classification approach, or error bounds.",
         "suggestions": [
             "Where does the data come from?",
@@ -111,7 +111,7 @@ published. Pipeline scripts: scrape_apcrda_lps.py, build_report.py, \
 caste_classifier_gemini.py. All MIT-licensed.""",
     },
     "contact": {
-        "title": "Contact & Tips — The Amaravati Record",
+        "title": "Contact & Tips — Andhra Record",
         "welcome": "Need to reach the editor? I can explain the different channels available.",
         "suggestions": [
             "How do I report a correction?",
@@ -127,7 +127,7 @@ Signal: not yet established. Tor/SecureDrop: not yet operational. Source protect
 commitments documented. Security researchers: see .well-known/security.txt.""",
     },
     "support": {
-        "title": "Support — The Amaravati Record",
+        "title": "Support — Andhra Record",
         "welcome": "Want to help? I can explain how sharing, citing, and translating support this work.",
         "suggestions": [
             "How can I support this publication?",
@@ -144,7 +144,7 @@ contributions: tips, corrections, surname corpus additions, code PRs, introducti
 Academic partnerships welcomed (no fees).""",
     },
     "privacy": {
-        "title": "Privacy Policy — The Amaravati Record",
+        "title": "Privacy Policy — Andhra Record",
         "welcome": "Questions about how this site handles your data? I can explain our privacy practices.",
         "suggestions": [
             "What data does this site collect?",
@@ -157,7 +157,7 @@ Academic partnerships welcomed (no fees).""",
         "tracking beyond GA4. No accounts, no logins. Data fiduciary: Sahit Koganti.",
     },
     "cookies": {
-        "title": "Cookie Notice — The Amaravati Record",
+        "title": "Cookie Notice — Andhra Record",
         "welcome": "Want to know exactly what cookies this site uses? I can walk you through it.",
         "suggestions": [
             "What cookies does this site set?",
@@ -170,7 +170,7 @@ Academic partnerships welcomed (no fees).""",
         "Consent stored in localStorage (not a cookie). Cookie settings reopenable from footer.",
     },
     "terms": {
-        "title": "Terms of Use — The Amaravati Record",
+        "title": "Terms of Use — Andhra Record",
         "welcome": "Questions about the terms? I can explain what you can and can't do with this site's content.",
         "suggestions": [
             "Can I republish your reports?",
@@ -183,7 +183,7 @@ Academic partnerships welcomed (no fees).""",
         "Defamation complaints handled within 14 days. Right of reply available.",
     },
     "editorial": {
-        "title": "Editorial Policy — The Amaravati Record",
+        "title": "Editorial Policy — Andhra Record",
         "welcome": "Questions about editorial standards? I can explain sourcing, verification, and conflict-of-interest rules.",
         "suggestions": [
             "How are sources verified?",
@@ -198,7 +198,7 @@ Academic partnerships welcomed (no fees).""",
         "right of reply, corrections ledger.",
     },
     "corrections": {
-        "title": "Corrections Ledger — The Amaravati Record",
+        "title": "Corrections Ledger — Andhra Record",
         "welcome": "Looking for corrections or want to report an error? I can help.",
         "suggestions": [
             "How do I report a correction?",
@@ -212,7 +212,7 @@ Academic partnerships welcomed (no fees).""",
         "Silent content edits are forbidden. Typo fixes are allowed silently.",
     },
     "ai-disclosure": {
-        "title": "AI Disclosure — The Amaravati Record",
+        "title": "AI Disclosure — Andhra Record",
         "welcome": "Questions about how this publication uses AI? I can explain exactly where and how.",
         "suggestions": [
             "Which AI models do you use?",
@@ -227,7 +227,7 @@ Academic partnerships welcomed (no fees).""",
         "Paid Gemini API tier used (data not used for training).",
     },
     "licenses": {
-        "title": "Licenses — The Amaravati Record",
+        "title": "Licenses — Andhra Record",
         "welcome": "Questions about reusing content, data, or code? I can explain which license applies.",
         "suggestions": [
             "Can I republish an article?",
@@ -305,7 +305,7 @@ def build_telugu_page(name: str) -> None:
     html = src.read_text(encoding="utf-8")
 
     system_prompt = (
-        "You are the reader assistant for The Amaravati Record (ది అమరావతి రికార్డ్), "
+        "You are the reader assistant for Andhra Record (ది అమరావతి రికార్డ్), "
         "an independent data-journalism publication. You are on the Telugu version of the "
         f'"{cfg["title"]}" page. Respond in Telugu. Use formal, Sanskritized Telugu. '
         "Keep English for acronyms (APCRDA, LPS, GIS) and use Arabic numerals for data."
@@ -327,7 +327,7 @@ def build_telugu_page(name: str) -> None:
 
 
 def main():
-    print("Building The Amaravati Record site pages...")
+    print("Building Andhra Record site pages...")
     if len(sys.argv) > 1:
         # Build specific page(s)
         for name in sys.argv[1:]:
