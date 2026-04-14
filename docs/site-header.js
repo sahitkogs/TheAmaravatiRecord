@@ -139,7 +139,7 @@ var AndhraRecord = (function () {
         '<header class="site-bar">' +
         '  <div class="site-bar__left">' +
         '    <a href="' + langBase + 'index.html" class="site-bar__logo" aria-label="Andhra Record Home">' +
-        '      <svg viewBox="0 0 220 36" width="170" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="36" rx="3" fill="#8b1a1a"/><text x="110" y="25" text-anchor="middle" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-weight="800" font-size="18" fill="#fff" letter-spacing="3">ANDHRA RECORD</text></svg>' +
+        '      <svg viewBox="0 0 220 36" width="150" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="36" rx="3" fill="#8b1a1a"/><text x="110" y="25" text-anchor="middle" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-weight="800" font-size="18" fill="#fff" letter-spacing="3">ANDHRA RECORD</text></svg>' +
         '    </a>' +
         '  </div>' +
         '  <nav class="site-bar__nav" aria-label="Primary">' +
