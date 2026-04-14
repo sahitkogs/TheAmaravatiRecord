@@ -163,3 +163,20 @@
   }
   .nav a { padding: 5px 10px !important; }
 }
+
+@media (max-width: 520px) {
+  .masthead__meta {
+    font-size: 7.5px !important;
+  }
+  .masthead__meta span:nth-child(1) {
+    display: none !important;
+  }
+  .masthead__tagline {
+    font-size: 11px !important;
+  }
+  .nav {
+    font-size: 9.5px !important;
+    letter-spacing: 1px !important;
+  }
+  .nav a { padding: 4px 8px !important; border-right: none !important; }
+}
