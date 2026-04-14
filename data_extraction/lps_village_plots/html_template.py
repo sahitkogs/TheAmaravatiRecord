@@ -99,7 +99,7 @@ body {{ font-family: var(--font-body); font-size: 16px; line-height: 1.6; color:
 /* Masthead */
 .masthead {{ text-align: center; border-top: 3px solid var(--rule); padding: 10px 0; margin-bottom: 16px; }}
 .masthead__meta {{ font-family: var(--font-sans); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-mid); display: flex; justify-content: space-between; padding-bottom: 6px; }}
-.masthead__title {{ font-family: var(--font-display); font-size: clamp(48px, 8vw, 72px); font-weight: 900; line-height: 1; letter-spacing: -1px; padding: 6px 0; border-top: 1px solid var(--rule); }}
+.masthead__title {{ font-family: var(--font-display); font-size: clamp(42px, 9vw, 84px); font-weight: 900; line-height: 1; letter-spacing: -1.5px; padding: 6px 0; border-top: 1px solid var(--rule); }}
 .masthead__tagline {{ font-family: var(--font-display); font-style: italic; font-size: 12px; color: var(--ink-mid); padding: 4px 0 10px; border-bottom: 3px solid var(--rule); }}
 
 /* Tabs */
