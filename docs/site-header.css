@@ -24,8 +24,7 @@ html[lang="te"] .masthead__tagline {
 
 html[lang="te"] .masthead__title {
   font-size: clamp(32px, 7vw, 60px) !important;
-  padding-left: 24px !important;
-  padding-right: 24px !important;
+  letter-spacing: 2px !important;
 }
 
 html[lang="te"] .masthead__meta,
