@@ -6,6 +6,21 @@
    Uses !important to override any inline styles.
    ================================================================ */
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700;900&display=swap');
+
+/* ---- Telugu font override ---- */
+html[lang="te"] .masthead__title,
+html[lang="te"] .masthead__tagline {
+  font-family: 'Noto Sans Telugu', 'Playfair Display', Georgia, serif !important;
+}
+
+html[lang="te"] .masthead__meta,
+html[lang="te"] .nav,
+html[lang="te"] .colophon,
+html[lang="te"] .lang-toggle {
+  font-family: 'Noto Sans Telugu', -apple-system, 'Segoe UI', system-ui, sans-serif !important;
+}
+
 /* ---- Dark mode override (manual toggle) ---- */
 html[data-theme="dark"] {
   --paper: #1a1815 !important;
@@ -78,6 +93,29 @@ html[data-theme="dark"] .ticker {
 .theme-toggle:hover {
   color: var(--ink) !important;
   transform: rotate(30deg) !important;
+}
+
+/* ---- Language toggle button ---- */
+.lang-toggle {
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  color: var(--ink-mid) !important;
+  letter-spacing: 0.5px !important;
+  font-family: var(--font-sans) !important;
+}
+
+.lang-toggle:hover {
+  color: var(--ink) !important;
+}
+
+.lang-toggle--mobile {
+  display: none !important;
+  margin-left: 4px !important;
 }
 
 .theme-toggle--mobile {
@@ -236,6 +274,8 @@ html[data-theme="dark"] .ticker {
   }
   .theme-toggle--desktop { display: none !important; }
   .theme-toggle--mobile { display: inline-block !important; }
+  .lang-toggle--desktop { display: none !important; }
+  .lang-toggle--mobile { display: inline-block !important; }
 
   .nav {
     font-size: 10px !important;
