@@ -37,9 +37,10 @@ var AmaravatiHeader = (function () {
   function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
-    // Update toggle icon
-    var btn = document.querySelector('.theme-toggle');
-    if (btn) btn.textContent = theme === 'dark' ? '\u2600' : '\u263D';
+    // Update all toggle icons
+    var btns = document.querySelectorAll('.theme-toggle');
+    var icon = theme === 'dark' ? '\u2600' : '\u263D';
+    for (var i = 0; i < btns.length; i++) btns[i].textContent = icon;
   }
 
   // Detect path depth from the script's own src attribute
@@ -89,17 +90,17 @@ var AmaravatiHeader = (function () {
         '  <div class="masthead__meta">' +
         '    <span>VOL. I &middot; NO. 001</span>' +
         '    <span>FRIDAY, APRIL 10, 2026</span>' +
-        '    <span>FOUNDING EDITION &middot; AMARAVATI, A.P.</span>' +
-        '    <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">' + icon + '</button>' +
+        '    <span>FOUNDING EDITION &middot; AMARAVATI, A.P. &ensp;<button class="theme-toggle theme-toggle--desktop" aria-label="Toggle dark mode" title="Toggle dark mode">' + icon + '</button></span>' +
+        '    <button class="theme-toggle theme-toggle--mobile" aria-label="Toggle dark mode" title="Toggle dark mode">' + icon + '</button>' +
         '  </div>' +
         '  <h1 class="masthead__title"><a href="' + base + 'index.html" style="color:inherit;text-decoration:none;">The Amaravati Record</a></h1>' +
         '  <p class="masthead__tagline">&ldquo;Independent reporting on the making of a capital&rdquo; &mdash; Est. 2026</p>' +
         '</header>';
 
-      // Bind toggle
-      var btn = mastheadEl.querySelector('.theme-toggle');
-      if (btn) {
-        btn.addEventListener('click', function () {
+      // Bind all toggles
+      var btns = mastheadEl.querySelectorAll('.theme-toggle');
+      for (var b = 0; b < btns.length; b++) {
+        btns[b].addEventListener('click', function () {
           var current = getTheme();
           setTheme(current === 'dark' ? 'light' : 'dark');
         });

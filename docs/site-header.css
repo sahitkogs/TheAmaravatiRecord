@@ -80,6 +80,11 @@ html[data-theme="dark"] .ticker {
   transform: rotate(30deg) !important;
 }
 
+.theme-toggle--mobile {
+  display: none !important;
+  margin-left: auto !important;
+}
+
 /* ---- Masthead ---- */
 .masthead {
   text-align: center !important;
@@ -229,6 +234,8 @@ html[data-theme="dark"] .ticker {
   .masthead__meta span:nth-child(3) {
     display: none !important;
   }
+  .theme-toggle--desktop { display: none !important; }
+  .theme-toggle--mobile { display: inline-block !important; }
 
   .nav {
     font-size: 10px !important;
