@@ -179,8 +179,10 @@ tr:hover td {{ background: var(--paper-tinted); }}
   /* Masthead */
   .masthead {{ padding: 4px 0; margin-bottom: 4px; }}
   .masthead__title {{ font-size: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }}
-  .masthead__meta {{ font-size: 8px; gap: 4px; white-space: nowrap; }}
-  .masthead__tagline {{ font-size: 12px; padding: 2px 0; }}
+  .masthead__meta {{ font-size: 8px; gap: 4px; }}
+  .masthead__meta span:nth-child(1),
+  .masthead__meta span:nth-child(3) {{ display: none; }}
+  .masthead__tagline {{ display: none; }}
 
   /* Tabs */
   .tab-bar {{ margin-bottom: 0; }}
