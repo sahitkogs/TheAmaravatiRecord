@@ -253,20 +253,15 @@ tr:hover td {{ background: var(--paper-tinted); }}
   .tab-content {{ display: block !important; }}
 }}
 </style>
+<script src="../site-header.js"></script>
 </head>
 <body>
 <div class="container">
 
 <!-- STICKY HEADER (masthead + tabs) -->
 <div class="sticky-header">
-<header class="masthead">
-  <div class="masthead__meta">
-    <span>VOL. I &middot; NO. 001</span>
-    <span>FRIDAY, APRIL 10, 2026</span>
-    <span>FOUNDING EDITION &middot; AMARAVATI, A.P.</span>
-  </div>
-  <h1 class="masthead__title"><a href="../index.html" style="color:inherit;text-decoration:none;">The Amaravati Record</a></h1>
-  <p class="masthead__tagline">&ldquo;Independent reporting on the making of a capital&rdquo; &mdash; Est. 2026</p>
+<div id="site-masthead"></div>
+<script>AmaravatiHeader.render({{ page: '' }});</script>
 </header>
 
 <!-- TABS -->

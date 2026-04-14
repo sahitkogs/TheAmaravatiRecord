@@ -5,7 +5,9 @@
    then call: AmaravatiHeader.render({ page: 'about' })
 
    The script detects its own depth (pages/, reports/, or root)
-   and sets link prefixes automatically.
+   and sets link prefixes automatically. It also injects
+   site-header.css to ensure consistent masthead styling even on
+   pages with inline CSS (like reports).
    ================================================================ */
 
 var AmaravatiHeader = (function () {
@@ -27,11 +29,26 @@ var AmaravatiHeader = (function () {
     return '';
   }
 
+  // Inject site-header.css if not already present
+  function injectCSS(base) {
+    var cssHref = base + 'site-header.css';
+    var existing = document.querySelector('link[href="' + cssHref + '"]');
+    if (!existing) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = cssHref;
+      document.head.appendChild(link);
+    }
+  }
+
   function render(opts) {
     opts = opts || {};
     var page = opts.page || '';          // e.g. 'about', 'reports', 'index'
     var base = getBase();                // '' from root, '../' from subfolders
     var pagesBase = base + 'pages/';
+
+    // Inject shared CSS
+    injectCSS(base);
 
     // ── Masthead ──
     var mastheadEl = document.getElementById('site-masthead');
