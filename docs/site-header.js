@@ -168,10 +168,21 @@ var AndhraRecord = (function () {
     }
 
     // ── Sticky ticker: set top dynamically based on header height ──
+    // Deferred because ticker HTML appears after the render() call in the page
     if (mastheadEl) {
-      var ticker = document.querySelector('.ticker');
-      if (ticker) {
-        ticker.style.top = mastheadEl.offsetHeight + 'px';
+      var stickyMasthead = mastheadEl;
+      function setTickerSticky() {
+        var ticker = document.querySelector('.ticker');
+        if (ticker) {
+          ticker.style.top = stickyMasthead.offsetHeight + 'px';
+        }
+      }
+      // Try immediately, then again after DOM is ready
+      setTickerSticky();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setTickerSticky);
+      } else {
+        setTimeout(setTickerSticky, 0);
       }
     }
 
