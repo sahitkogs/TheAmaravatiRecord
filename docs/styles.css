@@ -58,7 +58,7 @@
 body {
   font-family: var(--font-body);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--ink);
   background: var(--paper);
   -webkit-font-smoothing: antialiased;
@@ -140,7 +140,7 @@ code {
   letter-spacing: 2px;
   padding: 10px 0;
   border-bottom: 1px solid var(--rule-light);
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 .nav a {
@@ -166,7 +166,7 @@ code {
   letter-spacing: 0.8px;
   overflow: hidden;
   white-space: nowrap;
-  margin-bottom: 22px;
+  margin-bottom: 6px;
 }
 
 .ticker__track {
@@ -219,7 +219,7 @@ code {
   text-transform: uppercase;
   letter-spacing: 0.8px;
   padding: 2px 8px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 .badge--progress { background: var(--red); color: #fff; }
 .badge--review   { background: var(--blue); color: #fff; }
@@ -235,7 +235,7 @@ code {
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--ink-light);
-  margin-bottom: 14px;
+  margin-bottom: 6px;
 }
 
 /* ================================================================
@@ -245,8 +245,8 @@ code {
   display: grid;
   grid-template-columns: 1fr 360px;
   border-bottom: 1px solid var(--rule-light);
-  margin-bottom: 24px;
-  padding-bottom: 24px;
+  margin-bottom: 6px;
+  padding-bottom: 8px;
 }
 
 /* LEAD */
@@ -262,7 +262,7 @@ code {
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.5px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 .lead__headline a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
 
@@ -275,7 +275,7 @@ code {
   margin-bottom: 6px;
 }
 
-.lead__body { line-height: 1.65; font-size: 16px; }
+.lead__body { line-height: 1.5; font-size: 16px; }
 .lead__body p { margin-bottom: 8px; }
 
 .drop-cap::first-letter {
@@ -307,7 +307,7 @@ code {
 
 .inset-box__detail {
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--ink-mid);
 }
 
@@ -381,12 +381,12 @@ code {
   text-transform: uppercase;
   letter-spacing: 2px;
   color: var(--ink-mid);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .widget__body {
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 .widget__body p { margin-bottom: 8px; }
@@ -444,7 +444,7 @@ code {
 
 .sidebar__body {
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 /* ================================================================
@@ -454,8 +454,8 @@ code {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-bottom: 1px solid var(--rule-light);
-  margin-bottom: 24px;
-  padding-bottom: 24px;
+  margin-bottom: 6px;
+  padding-bottom: 8px;
 }
 
 .story { padding: 0 16px; border-left: 1px solid var(--rule-light); min-width: 0; }
@@ -473,7 +473,7 @@ code {
 
 .story__body {
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 /* ================================================================
@@ -483,8 +483,8 @@ code {
   display: grid;
   grid-template-columns: 1fr 360px;
   border-top: 3px solid var(--rule);
-  padding-top: 24px;
-  margin-bottom: 24px;
+  padding-top: 12px;
+  margin-bottom: 6px;
 }
 
 .letters {
@@ -509,11 +509,11 @@ code {
   font-size: 24px;
   font-weight: 700;
   border-bottom: 1.5px solid var(--rule);
-  padding-bottom: 12px;
-  margin-bottom: 18px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
 
-.letter { margin-bottom: 18px; }
+.letter { margin-bottom: 8px; }
 
 .letter__from {
   font-family: var(--font-sans);
@@ -525,7 +525,7 @@ code {
   margin-bottom: 4px;
 }
 
-.letter__body { font-size: 16px; line-height: 1.6; }
+.letter__body { font-size: 16px; line-height: 1.5; }
 .letter--question .letter__body { font-style: italic; }
 
 /* DISPATCH BOARD */
@@ -543,7 +543,7 @@ code {
   text-transform: uppercase;
   letter-spacing: 3px;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .dispatch-card {
@@ -590,9 +590,9 @@ code {
 .feature {
   max-width: 720px;
   margin: 0 auto;
-  padding-bottom: 24px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--rule-light);
-  margin-bottom: 24px;
+  margin-bottom: 6px;
 }
 
 .feature__kicker {
@@ -613,7 +613,7 @@ code {
   line-height: 1.05;
   letter-spacing: -1px;
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 .feature__deck {
@@ -624,7 +624,7 @@ code {
   color: var(--ink-mid);
   text-align: center;
   padding-bottom: 16px;
-  margin-bottom: 22px;
+  margin-bottom: 6px;
   border-bottom: 1.5px solid var(--rule);
 }
 
@@ -636,12 +636,12 @@ code {
   letter-spacing: 1px;
   color: var(--ink-light);
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 6px;
 }
 
 .feature__body { font-size: 16px; line-height: 1.7; }
-.feature__body p { margin-bottom: 14px; }
-.feature__body p.drop-cap { margin-bottom: 14px; }
+.feature__body p { margin-bottom: 6px; }
+.feature__body p.drop-cap { margin-bottom: 6px; }
 
 .feature__body h2 {
   font-family: var(--font-display);
@@ -706,7 +706,7 @@ code {
 
 .tile__desc {
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--ink-mid);
 }
 
@@ -735,7 +735,7 @@ code {
   text-transform: uppercase;
   letter-spacing: 2.5px;
   color: var(--ink-mid);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .contact-block__email {
@@ -786,17 +786,17 @@ code {
     padding-right: 0;
     border-right: none;
     border-bottom: 1px solid var(--rule-light);
-    padding-bottom: 22px;
-    margin-bottom: 22px;
+    padding-bottom: 10px;
+    margin-bottom: 6px;
   }
   .sidebar { padding-left: 0; }
 
-  .stories-row { grid-template-columns: 1fr; gap: 22px; }
+  .stories-row { grid-template-columns: 1fr; gap: 12px; }
   .story {
     padding: 0;
     border-left: none;
     border-bottom: 1px solid var(--rule-light);
-    padding-bottom: 22px;
+    padding-bottom: 10px;
   }
   .story:last-child { border-bottom: none; padding-bottom: 0; }
 
@@ -805,8 +805,8 @@ code {
     padding-right: 0;
     border-right: none;
     border-bottom: 1px solid var(--rule-light);
-    padding-bottom: 22px;
-    margin-bottom: 22px;
+    padding-bottom: 10px;
+    margin-bottom: 6px;
   }
   .dispatch-board { padding-left: 0; }
 
