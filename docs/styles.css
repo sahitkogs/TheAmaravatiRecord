@@ -354,9 +354,8 @@ code {
 }
 
 .inset-box {
-  float: right;
-  width: 280px;
-  margin: 0 0 10px 16px;
+  width: 100%;
+  margin: 0 0 10px 0;
   padding: 12px;
   border: 1.5px solid var(--rule);
 }
