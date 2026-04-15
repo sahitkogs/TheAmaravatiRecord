@@ -225,27 +225,33 @@ var AndhraRecord = (function () {
       el.querySelector('.lang-toggle').addEventListener('click', switchLang);
     }
 
-    // ── Footer ──
-    var footerEl = document.getElementById('site-footer');
-    if (footerEl) {
+    // ── Footer (deferred — #site-footer is at bottom of page) ──
+    function renderFooter() {
+      var footerEl = document.getElementById('site-footer');
+      if (!footerEl || footerEl.innerHTML.trim()) return;
       var cols = s.footerCols;
       var gridHTML = '';
       for (var c = 0; c < cols.length; c++) {
         gridHTML += '<div class="site-footer__col"><h4>' + cols[c].title + '</h4>';
         for (var lk = 0; lk < cols[c].links.length; lk++) {
           var link = cols[c].links[lk];
-          var href = link.external ? link.href : (link.isReport ? (langBase + link.page) : (langBase + link.page));
+          var href = link.external ? link.href : (langBase + link.page);
           var target = link.external ? ' target="_blank" rel="noopener"' : '';
           gridHTML += '<a href="' + href + '"' + target + '>' + link.label + '</a>';
         }
         gridHTML += '</div>';
       }
-
       footerEl.innerHTML =
         '<footer class="site-footer">' +
         '  <div class="site-footer__grid">' + gridHTML + '</div>' +
         '  <div class="site-footer__bottom">' + s.footerBottom + '</div>' +
         '</footer>';
+    }
+    renderFooter();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderFooter);
+    } else {
+      setTimeout(renderFooter, 0);
     }
   }
 
