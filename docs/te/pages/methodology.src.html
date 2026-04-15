@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>పద్ధతిశాస్త్రం &mdash; ఆంధ్ర రికార్డ్</title>
+  <meta name="description" content="ఆంధ్ర రికార్డ్ నివేదికల వెనుక ఉన్న డేటా పైప్‌లైన్, మూలాలు, వర్గీకరణ విధానం మరియు లోపం పరిధులు.">
+  <link rel="canonical" href="https://sahitkogs.github.io/AndhraRecord/te/pages/methodology.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="ఆంధ్ర రికార్డ్">
+  <meta property="og:title" content="పద్ధతిశాస్త్రం &mdash; ఆంధ్ర రికార్డ్">
+  <meta property="og:url" content="https://sahitkogs.github.io/AndhraRecord/te/pages/methodology.html">
+  <meta property="og:locale" content="te_IN">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css">
+  <script defer src="../../consent.js"></script>
+  <link rel="stylesheet" href="../../site-header.css?v=32">
+  <script src="../../site-header.js?v=32"></script>
+</head>
+<body>
+  <div class="broadsheet">
+    <div id="site-masthead"></div>
+    <script>AmaravatiHeader.render({ page: 'methodology' });</script>
+    <main>
+      <article class="feature">
+        <div class="feature__kicker">సంఖ్యలు ఎలా తయారవుతాయి</div>
+        <h2 class="feature__headline">పద్ధతిశాస్త్రం</h2>
+        <p class="feature__deck">ఆంధ్ర రికార్డ్ ప్రతి నివేదిక వెనుక ఉన్న డేటా పైప్‌లైన్, మూలాలు, వర్గీకరణ విధానం మరియు లోపం పరిధులు &mdash; ఏ పాఠకుడైనా లెక్కలను తనిఖీ చేయగలిగేలా డాక్యుమెంట్ చేయబడింది.</p>
+        <p class="feature__byline">చివరి నవీకరణ: ఏప్రిల్ 10, 2026 &ensp;|&ensp; సంస్కరణ 1.0</p>
+        <div class="feature__body">
+          <p class="drop-cap">ఆంధ్ర రికార్డ్ ఒక సరళమైన పని సూత్రంపై నిర్మించబడింది: మేము ప్రచురించే ప్రతి సంఖ్య ప్రభుత్వ డేటాసెట్‌లోని నిర్దిష్ట పంక్తికి ట్రేస్ చేయగలిగి ఉండాలి, మరియు ఆ పంక్తి మరియు ప్రచురిత శీర్షిక మధ్య ప్రతి రూపాంతరం బహిరంగ రిపాజిటరీలోని కోడ్ నుండి పునరుత్పత్తి చేయగలిగి ఉండాలి.</p>
+
+          <h2>1. మూల డేటా</h2>
+          <p>మా భూ సమీకరణ పరిశోధనల ప్రాథమిక మూలం <code>gis.apcrda.org/lps</code> వద్ద APCRDA భూ సమీకరణ పథకం పోర్టల్. ఇది ప్రభుత్వ-ఆతిథ్య ArcGIS REST API. అనుబంధ మూలాలు: కమ్యూనిటీ ఇంటిపేర్ల జాబితాలు (19 వెబ్‌సైట్లు), MyNeta ఎన్నికల అభ్యర్థుల డేటాబేస్, GeoJSON గ్రామ సరిహద్దులు.</p>
+
+          <h2>2. సేకరణ</h2>
+          <p>డేటా డాక్యుమెంట్ చేయబడిన Python స్క్రేపర్ (<code>scrape_apcrda_lps.py</code>) ద్వారా సేకరించబడుతుంది. స్క్రేపర్ <code>robots.txt</code> గౌరవిస్తుంది, రేట్ పరిమితులు పాటిస్తుంది, ఎటువంటి ప్రమాణీకరణ అవసరం లేదు.</p>
+
+          <h2>3. శుద్ధి &amp; నకిలీ తొలగింపు</h2>
+          <p>ముడి సేకరణ 95,645 ప్రవేశాలు ఇస్తుంది. శుద్ధి పైప్‌లైన్: గ్రామ పేర్లు ప్రామాణీకరించడం, నకిలీలు తొలగించడం (కాంపోజిట్ కీ ద్వారా), కార్పొరేట్ ప్లాట్లు మినహాయించడం &rarr; 47,993 వ్యక్తిగత-యాజమాన్య ప్లాట్లు.</p>
+
+          <h2>4. భూసత్య ఇంటిపేర్ల సంకలనం</h2>
+          <p>19 స్వతంత్ర మూలాల నుండి 5,548 ఇంటిపేర్లు 50+ కుల వర్గాలలో. ప్రతి ఇంటిపేరు URL-ఆధారిత ఆధారంతో ట్రేస్ చేయగలిగి ఉంటుంది. 351 మొదటి పేర్లు ఫ్రీక్వెన్సీ విశ్లేషణ ద్వారా గుర్తించబడి మినహాయించబడ్డాయి.</p>
+
+          <h2>5. రెండు-పొర వర్గీకరణ</h2>
+          <p><strong>పొర 1:</strong> నిర్ణయాత్మక ఇంటిపేరు శోధన &mdash; సంకలనంలో ఉన్న ఇంటిపేర్లకు ప్రత్యక్ష మ్యాపింగ్.</p>
+          <p><strong>పొర 2:</strong> Google Gemini 2.5 Flash ప్రతి-పేరు వర్గీకరణ &mdash; మిగిలిన కేసుల కోసం. నియంత్రిత ఉష్ణోగ్రత, నిర్మాణాత్మక ప్రాంప్ట్, విభేద-నివేదన సూచన.</p>
+          <p>ఫలితం: <strong>99.6% వర్గీకరణ రేటు</strong>. 0.4% "Unknown".</p>
+
+          <h2>6. తనిఖీ &amp; అనిశ్చితత్వం</h2>
+          <p>రెండు పద్ధతుల మధ్య అంగీకార రేటు ప్రాథమిక విశ్వసనీయత కొలత. సమూహ గణాంకాలు లోపం పరిధులతో నివేదించబడతాయి.</p>
+
+          <h2>7. గోప్యత &amp; మాస్కింగ్</h2>
+          <p>రైతుల మొదటి పేర్లు మరియు ప్లాట్ గుర్తింపులు ప్రచురణకు ముందు సర్వర్ వైపు మాస్క్ చేయబడతాయి. సమూహ గణాంకాలు ప్రభావితం కావు.</p>
+
+          <h2>8. పైప్‌లైన్ అమలు</h2>
+          <p>పైప్‌లైన్ డాక్యుమెంట్ చేయబడిన Python స్క్రిప్ట్‌లలో అమలు చేయబడింది:</p>
+          <ul>
+            <li><code>scrape_apcrda_lps.py</code> &mdash; డేటా సేకరణ</li>
+            <li><code>build_report.py</code> &mdash; శుద్ధి, వర్గీకరణ, నివేదిక నిర్మాణం</li>
+            <li><code>caste_classifier_gemini.py</code> &mdash; Gemini వర్గీకరణ</li>
+            <li><code>build_surname_explorer.py</code> &mdash; ఇంటిపేర్ల అన్వేషకుడు</li>
+          </ul>
+
+          <h2>9. పునరుత్పత్తి</h2>
+          <p>ఏ పాఠకుడైనా Gemini API కీతో పైప్‌లైన్‌ను పునరుత్పత్తి చేయగలరు. మూల డేటా బహిరంగ APCRDA పోర్టల్ నుండి. స్క్రిప్ట్‌లు GitHub రిపాజిటరీలో MIT లైసెన్స్ కింద.</p>
+
+          <h2>10. పరిమితులు</h2>
+          <ul>
+            <li>పేరు ఆధారంగా కుల వర్గీకరణ ఉజ్జాయింపు, జనగణన కాదు.</li>
+            <li>పేరు గుర్తింపు కాదు &mdash; ఒక వ్యక్తి తమ ఇంటిపేరుతో సూచించే కులానికి చెందకపోవచ్చు.</li>
+            <li>కార్పొరేట్ మరియు ప్రభుత్వ ప్లాట్లు మినహాయించబడ్డాయి &mdash; కానీ కొన్ని సంస్థలు వ్యక్తిగత యాజమాన్య ప్లాట్లుగా కనిపించవచ్చు.</li>
+            <li>సమూహ గణాంకాలు బలంగా ఉంటాయి; వ్యక్తిగత ఆపాదనలు లోపాల మార్జిన్ కలిగి ఉంటాయి.</li>
+          </ul>
+
+          <h2>11. AI వినియోగం</h2>
+          <p>Google Gemini 2.5 Flash ప్రతి-పేరు వర్గీకరణ కోసం మాత్రమే ఉపయోగించబడుతుంది. వచనం, శీర్షికలు లేదా విశ్లేషణ రాయడానికి LLM ఉపయోగించబడలేదు. పూర్తి వివరాలు <a href="ai-disclosure.html">AI వెల్లడి</a> పేజీలో.</p>
+        </div>
+      </article>
+    </main>
+    <div id="site-footer"></div>
+  </div>
+</body>
+</html>
