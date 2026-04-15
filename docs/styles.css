@@ -250,8 +250,8 @@ code {
 /* Lead story split: text left, stats right */
 .lead__split {
   display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   margin-bottom: 8px;
 }
 .lead__text { min-width: 0; }
@@ -272,6 +272,8 @@ code {
 .card {
   padding: 10px;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 .card--bordered {
   border: 1px solid var(--rule-light);
@@ -288,13 +290,15 @@ code {
 .card__body {
   font-size: 14px;
   line-height: 1.45;
+  flex: 1;
 }
 
 /* Letters grid: 2 columns */
 .letters__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
+  align-items: stretch;
 }
 
 /* Dispatch grid: 5 cards */
@@ -302,6 +306,7 @@ code {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 8px;
+  align-items: stretch;
 }
 
 /* ================================================================
@@ -355,7 +360,8 @@ code {
 
 .inset-box {
   width: 100%;
-  margin: 0 0 10px 0;
+  height: 100%;
+  margin: 0;
   padding: 12px;
   border: 1.5px solid var(--rule);
 }
