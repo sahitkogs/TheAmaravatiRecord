@@ -276,7 +276,7 @@ code {
 }
 
 .lead__body { line-height: 1.65; font-size: 16px; }
-.lead__body p { margin-bottom: 12px; }
+.lead__body p { margin-bottom: 8px; }
 
 .drop-cap::first-letter {
   float: left;
@@ -290,9 +290,9 @@ code {
 
 .inset-box {
   float: right;
-  width: 220px;
-  margin: 0 0 16px 20px;
-  padding: 14px;
+  width: 280px;
+  margin: 0 0 10px 16px;
+  padding: 12px;
   border: 1.5px solid var(--rule);
 }
 
@@ -339,21 +339,21 @@ code {
 .pull-quote {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.45;
   border-top: 2px solid var(--rule);
   border-bottom: 1px solid var(--rule);
-  padding: 14px 0;
-  margin: 20px 0;
+  padding: 10px 0;
+  margin: 12px 0;
   clear: right;
 }
 
 .column-text {
   column-count: 2;
-  column-gap: 24px;
+  column-gap: 20px;
   column-rule: 1px solid var(--rule-light);
 }
-.column-text p { margin-bottom: 12px; }
+.column-text p { margin-bottom: 8px; }
 
 /* SIDEBAR */
 .sidebar {
