@@ -554,7 +554,13 @@ function showTab(name) {{
   if (name === 'map' && !window._mapInit) {{ window._mapInit = true; initMap(); }}
   if (name === 'villages' && !window._vilInit) {{ window._vilInit = true; renderVillages(); }}
   window.dispatchEvent(new Event('resize'));
+  history.replaceState(null, '', '#' + name);
 }}
+// Open tab from URL hash on load
+(function() {{
+  var h = location.hash.replace('#','');
+  if (h && document.getElementById('tab-' + h)) showTab(h);
+}})();
 
 // ─── Overview ───
 // Table is rendered server-side, no JS needed for overview
