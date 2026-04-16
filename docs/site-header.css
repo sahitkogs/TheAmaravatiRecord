@@ -3,6 +3,9 @@
    CNN-style: 4-tier font scale, hamburger menu, dark footer
    ================================================================ */
 
+/* ---- Mobile side padding (shared across all pages) ---- */
+:root { --mobile-pad: 20px; }
+
 /* ---- Hind Guntur (Telugu) — self-hosted ---- */
 @font-face { font-family: 'Hind Guntur'; font-weight: 300; font-style: normal; font-display: swap; src: url('fonts/HindGuntur-Light.ttf') format('truetype'); }
 @font-face { font-family: 'Hind Guntur'; font-weight: 400; font-style: normal; font-display: swap; src: url('fonts/HindGuntur-Regular.ttf') format('truetype'); }
@@ -92,6 +95,12 @@ html[data-theme="dark"] .mobile-menu a {
   max-width: 1300px !important;
   padding-left: 24px !important;
   padding-right: 24px !important;
+}
+@media (max-width: 800px) {
+  .broadsheet, .container {
+    padding-left: var(--mobile-pad) !important;
+    padding-right: var(--mobile-pad) !important;
+  }
 }
 
 /* ================================================================
@@ -312,7 +321,7 @@ html[data-theme="dark"] .mobile-menu a {
   .dispatch-card__label, .letters__super, .letter__from { font-size: 13px !important; }
 
   .site-footer__grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .site-footer { padding: 24px 20px 16px !important; }
+  .site-footer { padding: 24px var(--mobile-pad) 16px !important; }
 }
 
 @media (max-width: 520px) {

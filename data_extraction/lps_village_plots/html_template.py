@@ -250,8 +250,8 @@ tr:hover td {{ background: var(--paper-tinted); }}
   /* Layout — normal scroll with sticky header */
   body {{ font-size: 16px; }}
   .container {{ padding: 0; width: 100%; max-width: 100vw; }}
-  .sticky-header {{ position: sticky; top: 0; padding: 0 12px; background: var(--paper); z-index: 100; overflow: hidden; }}
-  .tab-content {{ padding: 0 12px 16px; overflow-x: hidden; }}
+  .sticky-header {{ position: sticky; top: 0; padding: 0 var(--mobile-pad); background: var(--paper); z-index: 100; overflow: hidden; }}
+  .tab-content {{ padding: 0 var(--mobile-pad) 16px; overflow-x: hidden; }}
 
   /* Masthead */
   .masthead {{ padding: 4px 0; margin-bottom: 4px; }}
