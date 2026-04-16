@@ -344,8 +344,8 @@ tr:hover td {{ background: var(--paper-tinted); }}
   .tab-content {{ display: block !important; }}
 }}
 </style>
-<link rel="stylesheet" href="../site-header.css">
-<script src="../site-header.js?v=32"></script>
+<link rel="stylesheet" href="../../site-header.css">
+<script src="../../site-header.js?v=32"></script>
 </head>
 <body>
 <div class="container">
