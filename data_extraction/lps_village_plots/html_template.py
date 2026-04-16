@@ -519,6 +519,8 @@ tr:hover td {{ background: var(--paper-tinted); }}
 
 </div><!-- container -->
 
+<div id="site-footer"></div>
+
 <script>
 const TD = {json.dumps(table_data)};
 const CC = {json.dumps(caste_colors)};
