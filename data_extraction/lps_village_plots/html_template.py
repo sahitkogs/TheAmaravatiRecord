@@ -251,6 +251,7 @@ tr:hover td {{ background: var(--paper-tinted); }}
   body {{ font-size: 16px; }}
   .container {{ padding: 0; width: 100%; max-width: 100vw; }}
   .sticky-header {{ position: sticky; top: 0; padding: 0 var(--mobile-pad); background: var(--paper); z-index: 100; overflow: hidden; }}
+  .sticky-header #site-masthead {{ margin-bottom: 2px !important; }}
   .tab-content {{ padding: 0 var(--mobile-pad) 16px; overflow-x: hidden; }}
 
   /* Masthead */
@@ -262,7 +263,7 @@ tr:hover td {{ background: var(--paper-tinted); }}
   .masthead__tagline {{ display: none; }}
 
   /* Tabs */
-  .tab-bar {{ margin-bottom: 0; }}
+  .tab-bar {{ margin-bottom: 8px; }}
   .tab-btn {{ font-size: 12px; padding: 10px 12px; }}
 
   /* Stat cards */
@@ -334,7 +335,12 @@ tr:hover td {{ background: var(--paper-tinted); }}
   .pull-quote {{ font-size: 18px; }}
   .sidebar__headline {{ font-size: 18px; }}
   .sidebar__body {{ font-size: 15px; }}
-  .badge {{ font-size: 10px; }}
+  .badge {{ font-size: 12px; }}
+  .category {{ font-size: 12px; }}
+  .byline {{ font-size: 13px; }}
+  .inset-box h4 {{ font-size: 12px; }}
+  .inset-box p {{ font-size: 15px; }}
+  .progress-bar__label {{ font-size: 11px; }}
   .agents-table td {{ font-size: 13px; }}
 
 }}
