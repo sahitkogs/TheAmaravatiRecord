@@ -188,7 +188,7 @@ def process_data():
     surname_map, indicator_map, not_surnames = load_mapping(MAPPING_FILE)
 
     # Load Gemini per-name classification (primary source)
-    gemini_map_path = os.path.join(_DIR, 'processed_data', 'gemini_name_caste_map.json')
+    gemini_map_path = os.path.join(_DIR, 'processed_data', 'gemini_name_caste_map_v2.json')
     gemini_map = {}
     if os.path.exists(gemini_map_path):
         with open(gemini_map_path, encoding='utf-8') as f:

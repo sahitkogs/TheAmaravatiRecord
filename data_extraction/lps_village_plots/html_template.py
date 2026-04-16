@@ -219,6 +219,7 @@ tr:hover td {{ background: var(--paper-tinted); }}
 .dot--green {{ background: var(--green); }}
 .dot--blue {{ background: var(--blue); }}
 .dot--amber {{ background: var(--amber); }}
+.dot--idle {{ background: var(--ink-light); }}
 
 .sidebar__article {{ margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--rule-light); }}
 .sidebar__headline {{ font-family: var(--font-display); font-size: 16px; font-weight: 700; line-height: 1.25; margin-bottom: 4px; }}
