@@ -115,7 +115,7 @@ html[data-theme="dark"] .mobile-menu a {
   top: 0 !important;
   z-index: 1000 !important;
   background: var(--paper) !important;
-  margin-bottom: 16px !important;
+  margin-bottom: 10px !important;
 }
 
 /* ================================================================
