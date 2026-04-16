@@ -249,7 +249,7 @@ tr:hover td {{ background: var(--paper-tinted); }}
 @media (max-width: 800px) {{
   /* Layout — normal scroll with sticky header */
   body {{ font-size: 16px; }}
-  .container {{ padding: 0 !important; width: 100%; max-width: 100vw; }}
+  .container {{ padding: 0; width: 100%; max-width: 100vw; }}
   .sticky-header {{ position: sticky; top: 0; padding: 0 var(--mobile-pad); background: var(--paper); z-index: 100; overflow: hidden; }}
   .tab-content {{ padding: 0 var(--mobile-pad) 16px; overflow-x: hidden; }}
 

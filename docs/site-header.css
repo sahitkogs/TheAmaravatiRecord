@@ -90,14 +90,14 @@ html[data-theme="dark"] .mobile-menu a {
 }
 
 /* ---- Consistent layout on all page wrappers ---- */
-.broadsheet, .container {
+.broadsheet {
   padding-top: 2px !important;
   max-width: 1300px !important;
   padding-left: 24px !important;
   padding-right: 24px !important;
 }
 @media (max-width: 800px) {
-  .broadsheet, .container {
+  .broadsheet {
     padding-left: var(--mobile-pad) !important;
     padding-right: var(--mobile-pad) !important;
   }
