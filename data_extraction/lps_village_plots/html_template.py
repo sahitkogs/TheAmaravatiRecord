@@ -337,8 +337,8 @@ tr:hover td {{ background: var(--paper-tinted); }}
   .badge {{ font-size: 10px; }}
   .agents-table td {{ font-size: 13px; }}
 
-  /* Footer */
-  .colophon {{ padding: 10px 16px; font-size: 12px; }}
+  /* Hide site footer on mobile — report uses full-screen app layout */
+  #site-footer {{ display: none; }}
 }}
 @media print {{
   body {{ background: #fff; color: #000; }}
