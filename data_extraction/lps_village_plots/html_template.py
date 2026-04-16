@@ -513,10 +513,6 @@ tr:hover td {{ background: var(--paper-tinted); }}
   <div class="pagination" id="pagination"></div>
 </div>
 
-<footer class="colophon">
-  The Amaravati Record &middot; Data Room &middot; {stats['total_plots']:,} plots &middot; {num_villages} villages &middot; Source: APCRDA LPS Portal &middot; Not an official government document
-</footer>
-
 </div><!-- container -->
 
 <div id="site-footer"></div>
