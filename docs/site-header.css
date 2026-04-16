@@ -125,7 +125,7 @@ html[data-theme="dark"] .mobile-menu a {
   display: flex !important;
   align-items: center !important;
   padding: 0 !important;
-  border-bottom: 1px solid var(--rule-light) !important;
+  border-bottom: 3px solid var(--rule-light) !important;
   margin: 0 !important;
   font-family: var(--font-sans) !important;
 }
