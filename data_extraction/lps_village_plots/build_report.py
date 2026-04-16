@@ -17,6 +17,14 @@ load_dotenv()
 from chatbot_in_html import inject_chatbot
 from chatbot_in_html.themes import THEME_NEWSPAPER
 
+
+def _load_investigation_content(lang='en'):
+    """Load the investigation narrative HTML fragment for the given language."""
+    filename = f'investigation_content_{lang}.html'
+    filepath = os.path.join(_DIR, filename)
+    with open(filepath, 'r', encoding='utf-8') as f:
+        return f.read()
+
 CHATBOT_SYSTEM_PROMPT = """You are the research assistant embedded in the Amaravati CRDA Land Allocation Caste Distribution Report. The report analyzes plot-level land pooling data from the Andhra Pradesh Capital Region Development Authority (APCRDA), with surname-based caste assignment.
 
 When the user asks a question, you will receive a [Screen Context] block containing the page title, section outline, the current section they are viewing, and the text currently visible in their viewport. Use that to answer precisely and cite the current section by name when relevant.
@@ -51,7 +59,9 @@ _DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.join(_DIR, '..', '..')
 DATA_FILE = os.path.join(_DIR, "raw_data", "apcrda_lps_data.csv")
 MAPPING_FILE = os.path.join(_DIR, "processed_data", "caste_surname_map.json")
-OUTPUT_FILE = os.path.join(_REPO, "docs", "reports", "lps-caste-dashboard.html")
+OUTPUT_DIR_EN = os.path.join(_REPO, "docs", "en", "reports")
+OUTPUT_DIR_TE = os.path.join(_REPO, "docs", "te", "reports")
+OUTPUT_FILENAME = "lps-caste-dashboard.html"
 
 # Village name normalization map
 VILLAGE_NORMALIZE = {
@@ -474,7 +484,7 @@ def build_plot_geodata(plots):
 
 # ─── HTML Generation ─────────────────────────────────────────────────────────
 
-def generate_html(plots, stats):
+def generate_html(plots, stats, investigation_html=''):
     import os
     from html_template import build_html
 
@@ -487,7 +497,7 @@ def generate_html(plots, stats):
 
     mask_pii = os.environ.get('MASK_PII', 'false').lower() in ('true', '1', 'yes')
 
-    return build_html(plots, stats, plot_geodata, surname_count=surname_count, mask_pii=mask_pii)
+    return build_html(plots, stats, plot_geodata, surname_count=surname_count, mask_pii=mask_pii, investigation_html=investigation_html)
 
 
 # ─── Main ────────────────────────────────────────────────────────────────────
@@ -513,22 +523,27 @@ def main():
     for conf, count in sorted(stats['confidence_counts'].items()):
         print(f"  {conf:8s}: {count:,}")
 
-    print(f"\nGenerating HTML report...")
-    html = generate_html(plots, stats)
-    html = inject_chatbot(
-        html,
-        assistant_name="Caste Report Assistant",
-        system_prompt=CHATBOT_SYSTEM_PROMPT,
-        welcome_message="Hi! Ask me anything about this report. I can see the section you are currently viewing.",
-        suggestions=CHATBOT_SUGGESTIONS,
-        context_data=_build_chatbot_context(plots, stats),
-        default_backend="webllm",
-        custom_css=THEME_NEWSPAPER,
-    )
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        f.write(html)
-    print(f"Report saved to {OUTPUT_FILE}")
-    print(f"File size: {os.path.getsize(OUTPUT_FILE) / 1024 / 1024:.1f} MB")
+    for lang in ('en', 'te'):
+        print(f"\nGenerating {lang.upper()} HTML report...")
+        investigation_html = _load_investigation_content(lang)
+        html = generate_html(plots, stats, investigation_html=investigation_html)
+        html = inject_chatbot(
+            html,
+            assistant_name="Caste Report Assistant",
+            system_prompt=CHATBOT_SYSTEM_PROMPT,
+            welcome_message="Hi! Ask me anything about this report. I can see the section you are currently viewing.",
+            suggestions=CHATBOT_SUGGESTIONS,
+            context_data=_build_chatbot_context(plots, stats),
+            default_backend="webllm",
+            custom_css=THEME_NEWSPAPER,
+        )
+        output_dir = OUTPUT_DIR_EN if lang == 'en' else OUTPUT_DIR_TE
+        output_file = os.path.join(output_dir, OUTPUT_FILENAME)
+        os.makedirs(output_dir, exist_ok=True)
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(html)
+        size_mb = os.path.getsize(output_file) / 1024 / 1024
+        print(f"  Saved to {output_file} ({size_mb:.1f} MB)")
 
 if __name__ == '__main__':
     main()
