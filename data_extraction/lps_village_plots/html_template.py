@@ -247,11 +247,11 @@ tr:hover td {{ background: var(--paper-tinted); }}
 .dispatch-card--amber {{ border-left: 3px solid var(--amber); }}
 
 @media (max-width: 800px) {{
-  /* Layout */
-  body {{ font-size: 16px; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }}
-  .container {{ padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; width: 100%; max-width: 100vw; }}
-  .sticky-header {{ flex-shrink: 0; padding: 0 12px; background: var(--paper); z-index: 100; overflow: hidden; }}
-  .tab-content {{ flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding: 0 12px 16px; }}
+  /* Layout — normal scroll with sticky header */
+  body {{ font-size: 16px; }}
+  .container {{ padding: 0; width: 100%; max-width: 100vw; }}
+  .sticky-header {{ position: sticky; top: 0; padding: 0 12px; background: var(--paper); z-index: 100; overflow: hidden; }}
+  .tab-content {{ padding: 0 12px 16px; overflow-x: hidden; }}
 
   /* Masthead */
   .masthead {{ padding: 4px 0; margin-bottom: 4px; }}
@@ -303,7 +303,7 @@ tr:hover td {{ background: var(--paper-tinted); }}
   #map-controls label {{ font-size: 12px; white-space: nowrap; }}
   #map-controls label[style*="margin-left"] {{ margin-left: 2px !important; }}
   #map-controls #map-plot-count {{ display: none; }}
-  #tab-map.active #map {{ flex: 1; min-height: 0; border: none; }}
+  #tab-map.active #map {{ height: calc(100vh - 120px); min-height: 400px; border: none; }}
   .map-legend {{ display: none; }}
   #map-extra-info {{ display: none; }}
 
@@ -337,8 +337,6 @@ tr:hover td {{ background: var(--paper-tinted); }}
   .badge {{ font-size: 10px; }}
   .agents-table td {{ font-size: 13px; }}
 
-  /* Hide site footer on mobile — report uses full-screen app layout */
-  #site-footer {{ display: none; }}
 }}
 @media print {{
   body {{ background: #fff; color: #000; }}
