@@ -27,7 +27,7 @@ def _mask_farmer_names(names):
     return ', '.join(masked)
 
 
-def build_html(plots, stats, plot_geodata, surname_count=0, mask_pii=False):
+def build_html(plots, stats, plot_geodata, surname_count=0, mask_pii=False, investigation_html=''):
     # Table data
     table_data = []
     for p in plots:
@@ -82,12 +82,17 @@ def build_html(plots, stats, plot_geodata, surname_count=0, mask_pii=False):
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Source Serif 4', Georgia, serif;
   --font-sans: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --red: #8b1a1a; --green: #2d5f2d; --blue: #1a3a5f; --amber: #8b6914;
+  --red-bg: #f0ddd8; --green-bg: #dce8dc; --blue-bg: #d8e0ea; --amber-bg: #ede4d0;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
 }}
 @media (prefers-color-scheme: dark) {{
   :root {{
     --paper: #1a1815; --paper-tinted: #242018;
     --ink: #e8e4dd; --ink-mid: #a8a49d; --ink-light: #706c65;
     --rule: #706c65; --rule-mid: #504c45; --rule-light: #3a3630;
+    --red: #d4605a; --green: #6aaa6a; --blue: #6a9ad4; --amber: #d4a44a;
+    --red-bg: #3a2220; --green-bg: #203020; --blue-bg: #1a2a3a; --amber-bg: #3a3020;
   }}
 }}
 *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -169,6 +174,76 @@ tr:hover td {{ background: var(--paper-tinted); }}
 /* Footer */
 .colophon {{ font-family: var(--font-sans); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-light); border-top: 3px solid var(--rule); padding-top: 10px; margin-top: 24px; text-align: center; }}
 
+/* ─── Investigation narrative (Overview tab) ─── */
+.category {{ font-family: var(--font-sans); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-mid); margin-bottom: 2px; }}
+.badge {{ display: inline-block; font-family: var(--font-sans); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 2px; }}
+.badge--red {{ background: var(--red-bg); color: var(--red); }}
+.badge--green {{ background: var(--green-bg); color: var(--green); }}
+.badge--blue {{ background: var(--blue-bg); color: var(--blue); }}
+.badge--amber {{ background: var(--amber-bg); color: var(--amber); }}
+.byline {{ font-family: var(--font-sans); font-size: 11px; color: var(--ink-mid); margin-top: 6px; }}
+
+#tab-overview .front-page {{ border-bottom: 3px solid var(--rule); padding-bottom: 20px; margin-bottom: 20px; }}
+#tab-overview .main-content {{ display: grid; grid-template-columns: 1fr 300px; gap: 30px; }}
+
+.lead__headline {{ font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px); font-weight: 900; line-height: 1.08; letter-spacing: -0.5px; margin-bottom: 10px; }}
+.lead__deck {{ font-family: var(--font-display); font-style: italic; font-size: 17px; line-height: 1.5; color: var(--ink-mid); margin-bottom: 14px; border-left: 3px solid var(--rule); padding-left: 14px; }}
+.lead__body {{ font-size: 16px; line-height: 1.75; }}
+.lead__body p {{ margin-bottom: 12px; }}
+
+.drop-cap::first-letter {{ font-family: var(--font-display); float: left; font-size: 3.4em; line-height: 0.8; padding-right: 8px; font-weight: 900; color: var(--ink); }}
+
+.inset-box {{ border: 1px solid var(--rule-light); padding: 14px 16px; margin: 18px 0; background: var(--paper-tinted); }}
+.inset-box h4 {{ font-family: var(--font-sans); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-mid); margin-bottom: 6px; }}
+.inset-box p {{ font-size: 14px; line-height: 1.6; color: var(--ink-mid); }}
+
+.progress-bar {{ height: 10px; background: var(--rule-light); border-radius: 2px; overflow: hidden; margin: 6px 0; }}
+.progress-bar span {{ display: block; height: 100%; border-radius: 2px; }}
+
+.pull-quote {{ font-family: var(--font-display); font-size: 20px; font-style: italic; line-height: 1.4; border-top: 2px solid var(--rule); border-bottom: 2px solid var(--rule); padding: 14px 0; margin: 20px 0; color: var(--ink-mid); text-align: center; }}
+
+.column-text {{ column-count: 2; column-gap: 28px; column-rule: 1px solid var(--rule-light); font-size: 15px; line-height: 1.7; }}
+.column-text p {{ margin-bottom: 10px; }}
+
+#tab-overview .sidebar {{ border-left: 2px solid var(--rule); padding-left: 20px; }}
+.sidebar__widget {{ margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--rule-light); }}
+.widget__label {{ font-family: var(--font-sans); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-mid); margin-bottom: 8px; }}
+.widget__body {{ font-size: 14px; line-height: 1.6; }}
+
+.agents-table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
+.agents-table th {{ font-family: var(--font-sans); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-mid); padding: 4px 6px; text-align: left; border-bottom: 1.5px solid var(--rule); }}
+.agents-table td {{ padding: 4px 6px; border-bottom: 1px solid var(--rule-light); font-family: var(--font-mono); font-size: 12px; }}
+
+.dot {{ display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }}
+.dot--red {{ background: var(--red); }}
+.dot--green {{ background: var(--green); }}
+.dot--blue {{ background: var(--blue); }}
+.dot--amber {{ background: var(--amber); }}
+
+.sidebar__article {{ margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--rule-light); }}
+.sidebar__headline {{ font-family: var(--font-display); font-size: 16px; font-weight: 700; line-height: 1.25; margin-bottom: 4px; }}
+.sidebar__body {{ font-size: 13px; line-height: 1.5; color: var(--ink-mid); }}
+
+.stories-row {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }}
+.story {{ border: 1px solid var(--rule-light); padding: 16px; }}
+.story h3 {{ font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 6px; }}
+.story p {{ font-size: 14px; line-height: 1.6; color: var(--ink-mid); }}
+
+.lower-fold {{ border-top: 2px solid var(--rule); padding-top: 18px; margin-top: 20px; }}
+.letters {{ font-size: 14px; line-height: 1.7; color: var(--ink-mid); }}
+.letters p {{ margin-bottom: 8px; }}
+
+.dispatch-board {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0; }}
+.dispatch-card {{ border: 1px solid var(--rule-light); padding: 12px; }}
+.dispatch-card h4 {{ font-family: var(--font-sans); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-mid); margin-bottom: 4px; }}
+.dispatch-card p {{ font-size: 22px; font-family: var(--font-display); font-weight: 900; }}
+.dispatch-card a {{ font-family: var(--font-sans); font-size: 10px; color: var(--ink-mid); text-decoration: none; border-bottom: 1px dotted var(--rule-mid); }}
+.dispatch-card a:hover {{ color: var(--ink); }}
+.dispatch-card--red {{ border-left: 3px solid var(--red); }}
+.dispatch-card--green {{ border-left: 3px solid var(--green); }}
+.dispatch-card--blue {{ border-left: 3px solid var(--blue); }}
+.dispatch-card--amber {{ border-left: 3px solid var(--amber); }}
+
 @media (max-width: 800px) {{
   /* Layout */
   body {{ font-size: 16px; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }}
@@ -244,6 +319,21 @@ tr:hover td {{ background: var(--paper-tinted); }}
   .pagination button {{ font-size: 14px; padding: 8px 14px; }}
   .pagination span {{ font-size: 14px; }}
 
+  /* Investigation narrative */
+  #tab-overview .main-content {{ grid-template-columns: 1fr; gap: 16px; }}
+  #tab-overview .sidebar {{ border-left: none; padding-left: 0; border-top: 2px solid var(--rule); padding-top: 16px; }}
+  .lead__headline {{ font-size: 26px; }}
+  .lead__deck {{ font-size: 16px; }}
+  .lead__body {{ font-size: 17px; }}
+  .column-text {{ column-count: 1; }}
+  .stories-row {{ grid-template-columns: 1fr; }}
+  .dispatch-board {{ grid-template-columns: 1fr 1fr; }}
+  .pull-quote {{ font-size: 18px; }}
+  .sidebar__headline {{ font-size: 18px; }}
+  .sidebar__body {{ font-size: 15px; }}
+  .badge {{ font-size: 10px; }}
+  .agents-table td {{ font-size: 13px; }}
+
   /* Footer */
   .colophon {{ padding: 10px 16px; font-size: 12px; }}
 }}
@@ -268,16 +358,22 @@ tr:hover td {{ background: var(--paper-tinted); }}
 
 <!-- TABS -->
 <nav class="tab-bar">
-  <button class="tab-btn" onclick="showTab('overview')">Overview</button>
-  <button class="tab-btn active" onclick="showTab('map')">Plot Map</button>
+  <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+  <button class="tab-btn" onclick="showTab('numbers')">Numbers</button>
+  <button class="tab-btn" onclick="showTab('map')">Plot Map</button>
   <button class="tab-btn" onclick="showTab('villages')">Village Breakdown</button>
   <button class="tab-btn" onclick="showTab('source')">Data Source &amp; Process</button>
   <button class="tab-btn" onclick="showTab('data')">Search the Data</button>
 </nav>
 </div>
 
-<!-- ═══ OVERVIEW ═══ -->
-<div id="tab-overview" class="tab-content">
+<!-- ═══ OVERVIEW (Investigation Narrative) ═══ -->
+<div id="tab-overview" class="tab-content active">
+{investigation_html}
+</div>
+
+<!-- ═══ NUMBERS ═══ -->
+<div id="tab-numbers" class="tab-content">
   <div class="stats">
     <div class="stat">
       <div class="stat__label">Plots Analysed</div>
@@ -324,7 +420,7 @@ tr:hover td {{ background: var(--paper-tinted); }}
 </div>
 
 <!-- ═══ PLOT MAP ═══ -->
-<div id="tab-map" class="tab-content active">
+<div id="tab-map" class="tab-content">
   <h2 class="section-title">Capital Region Plot Map</h2>
   <p class="section-sub map-deck">{len(plot_geodata['plots']):,} individual plots colour-coded by caste of land beneficiary</p>
   <div id="map-controls" style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center;">
@@ -442,7 +538,13 @@ function showTab(name) {{
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  event.target.classList.add('active');
+  var btns = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < btns.length; i++) {{
+    if (btns[i].getAttribute('onclick').indexOf("'" + name + "'") !== -1) {{
+      btns[i].classList.add('active');
+      break;
+    }}
+  }}
   if (name === 'data' && !window._tblInit) {{ window._tblInit = true; filterTable(); }}
   if (name === 'map' && !window._mapInit) {{ window._mapInit = true; initMap(); }}
   if (name === 'villages' && !window._vilInit) {{ window._vilInit = true; renderVillages(); }}
@@ -733,9 +835,7 @@ function sortTable(c) {{
   cPage = 0; renderPage();
 }}
 
-// Init map on load since it's the default tab
-window._mapInit = true;
-initMap();
+// Map lazy-inits when its tab is clicked
 </script>
 </body>
 </html>"""
